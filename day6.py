@@ -21,7 +21,7 @@ def day6_split():
     return output
 
 
-def day6():
+def day6_pt1():
     boxes = day6_split()
     lights = collections.defaultdict(bool)
     for box in boxes:
@@ -40,3 +40,23 @@ def day6():
                 else:
                     lights[(x, y)] = False
     return list(lights.values()).count(True)
+
+
+def day6_pt2():
+    boxes = day6_split()
+    lights = collections.defaultdict(bool)
+    for box in boxes:
+        action = box[0]
+        tl = box[1]
+        br = box[2]
+        x_dim = (int(tl[0]), int(br[0]) + 1)
+        y_dim = (int(tl[1]), int(br[1]) + 1)
+        for x in range(*x_dim):
+            for y in range(*y_dim):
+                if action == 'toggle':
+                    lights[(x, y)] += 2
+                elif action == 'on':
+                    lights[(x, y)] += 1
+                else:
+                    lights[(x, y)] = max(lights[(x, y)] - 1, 0)
+    return sum(list(lights.values()))
