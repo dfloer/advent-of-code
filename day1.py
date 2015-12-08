@@ -5,10 +5,8 @@ def day_1_pt1(directions):
 
 def day1_pt2(directions):
     numbers = [1 if x == '(' else -1 for x in directions]
-    idx = 0
     total = 0
-    while(True):
+    for idx in range(len(numbers)):
         total += numbers[idx]
         if total == -1:
             return idx + 1  # +1 needed because using 1 based index in problem.
-        idx += 1
