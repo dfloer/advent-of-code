@@ -7,7 +7,7 @@ def day7_split():
     return lines
 
 
-def day7(wire):
+def day7_common():
     node = namedtuple('node', ('left_parent', 'right_parent', 'operator'))
     input_lines = day7_split()
     lines = [x.split(' ') for x in input_lines]
@@ -24,7 +24,19 @@ def day7(wire):
             print('oh snap')
             return False
         result[end_val] = data
-    return find_value(wire, result)
+    return result
+
+
+def day7_pt1(wire):
+    circuit = day7_common()
+    return find_value(wire, circuit)
+
+
+def day7_pt2(wire):
+    circuit = day7_common()
+    pt1 = day7_pt1(wire)
+    circuit['b'] = pt1
+    return find_value(wire, circuit)
 
 
 def find_value(wire, circuit):
