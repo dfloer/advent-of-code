@@ -1,4 +1,10 @@
 from collections import defaultdict, namedtuple
+from functools import lru_cache
+
+
+class Hdefaultdict(defaultdict):
+    def __hash__(self):
+        return hash(frozenset(self.items()))
 
 
 def day7_split():
@@ -11,7 +17,7 @@ def day7_common():
     node = namedtuple('node', ('left_parent', 'right_parent', 'operator'))
     input_lines = day7_split()
     lines = [x.split(' ') for x in input_lines]
-    result = defaultdict(bool)
+    result = Hdefaultdict(bool)
     for l in lines:
         end_val = l[-1].rstrip('\n')
         if len(l) == 3:
@@ -39,6 +45,7 @@ def day7_pt2(wire):
     return find_value(wire, circuit)
 
 
+@lru_cache(maxsize=None, typed=True)
 def find_value(wire, circuit):
     try:
         circuit[wire] = int(wire)
@@ -50,17 +57,13 @@ def find_value(wire, circuit):
         return node
     if node.right_parent is None and node.operator is None:
         try:
-            circuit[wire] = int(node.left_parent)
-            return circuit[wire]
+            return int(node.left_parent)
         except ValueError:
-            circuit[wire] = find_value(node.left_parent, circuit)
-            return circuit[wire]
+            return find_value(node.left_parent, circuit)
     elif node.operator == 'NOT':
-        circuit[wire] = 65535 - find_value(node.left_parent, circuit)
-        return circuit[wire]
+        return 65535 - find_value(node.left_parent, circuit)
     else:
-        circuit[wire] = run_op(find_value(node.left_parent, circuit), node.operator, find_value(node.right_parent, circuit))
-        return circuit[wire]
+        return run_op(find_value(node.left_parent, circuit), node.operator, find_value(node.right_parent, circuit))
 
 
 def run_op(a, o, b):
