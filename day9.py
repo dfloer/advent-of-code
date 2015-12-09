@@ -8,7 +8,7 @@ def day9_split():
     return lines
 
 
-def day9():
+def day9_common():
     input_lines = day9_split()
     cities = set()
     for l in input_lines:
@@ -26,7 +26,17 @@ def day9():
             dist = find_distance(city_pair, input_lines)
             path_dist.extend([dist])
         all_distances.append(sum(path_dist))
+    return all_distances
+
+
+def day9_pt1():
+    all_distances = day9_common()
     return min(all_distances)
+
+
+def day9_pt2():
+    all_distances = day9_common()
+    return max(all_distances)
 
 
 def find_distance(pair, lines):
