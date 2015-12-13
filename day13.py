@@ -23,8 +23,18 @@ def day13_parse():
     return out, people
 
 
-def day_13():
+def day_13_pt1():
     l, people = day13_parse()
+    return day13_common(l, people)
+
+
+def day_13_pt2():
+    l, people = day13_parse()
+    people.add('42')
+    return day13_common(l, people)
+
+
+def day13_common(l, people):
     permute_people = permutations(people)
     totals = []
     for p in permute_people:
@@ -36,7 +46,10 @@ def day_13():
                 pair = [p[idx],  p[idx + 1]]
             rpair = (pair[-1], pair[0])
             pair = tuple(pair)
-            h = l[pair] + l[rpair]
+            if '42' in pair:
+                h = 0
+            else:
+                h = l[pair] + l[rpair]
             happiness.append(h)
         totals.append(sum(happiness))
     return max(totals)
