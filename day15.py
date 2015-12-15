@@ -18,11 +18,15 @@ def day15_parse():
     return d
 
 
-def day15():
+def day15_pt1():
     x = day15_parse()
-    d = {k: v[:-1] for k, v in x.items()}  # remove calories.
-    print(d)
-    return knapsack(d, 100)
+    d = {k: v[:-1] for k, v in x.items()}
+    return knapsack(d, 100, None)
+
+
+def day15_pt2():
+    d = day15_parse()
+    return knapsack(d, 100, 500)
 
 
 def f(n, s):
@@ -34,7 +38,7 @@ def f(n, s):
                 yield (i,) + j
 
 
-def knapsack(d, total=100):
+def knapsack(d, total=100, calories=None):
     # all_orderings = [y for y in permutations([x for x in range(total)], 5) if sum(y) == total]
     all_orderings = list(f(len(d), total))
     res = []
@@ -42,7 +46,12 @@ def knapsack(d, total=100):
     for x in all_orderings:
         q = [[z[0] * a for a in z[1]] for z in zip(x, v)]
         r = [max(sum(a), 0) for a in zip(*q)]
-        res.append(reduce(operator.mul, r, 1))
+        if calories is not None and r[-1] != calories:
+            res.append(0)
+        elif calories is None:
+            res.append(reduce(operator.mul, r, 1))
+        else:
+            res.append(reduce(operator.mul, r[:-1], 1))
     m = max(res)
     i = res.index(m)
     return m, all_orderings[i]
