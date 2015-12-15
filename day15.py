@@ -1,4 +1,3 @@
-from itertools import permutations
 from functools import reduce
 import operator
 
@@ -39,19 +38,20 @@ def f(n, s):
 
 
 def knapsack(d, total=100, calories=None):
-    # all_orderings = [y for y in permutations([x for x in range(total)], 5) if sum(y) == total]
     all_orderings = list(f(len(d), total))
-    res = []
-    v = list(d.values())
-    for x in all_orderings:
-        q = [[z[0] * a for a in z[1]] for z in zip(x, v)]
-        r = [max(sum(a), 0) for a in zip(*q)]
-        if calories is not None and r[-1] != calories:
-            res.append(0)
+    results = []
+    properties = list(d.values())
+    for order in all_orderings:
+        # Generates a list of the total amount of each property for each ingredient.
+        total_ingredients = [[count * total_property for total_property in amounts] for count, amounts in zip(order, properties)]
+        # Adds the properties together across all of the ingredients
+        total_amounts = [max(sum(prop), 0) for prop in zip(*total_ingredients)]
+        if calories is not None and total_amounts[-1] != calories:
+            results.append(0)
         elif calories is None:
-            res.append(reduce(operator.mul, r, 1))
+            results.append(reduce(operator.mul, total_amounts, 1))
         else:
-            res.append(reduce(operator.mul, r[:-1], 1))
-    m = max(res)
-    i = res.index(m)
+            results.append(reduce(operator.mul, total_amounts[:-1], 1))
+    m = max(results)
+    i = results.index(m)
     return m, all_orderings[i]
