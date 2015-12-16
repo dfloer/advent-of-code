@@ -1,3 +1,6 @@
+machine_results = {'children': 3, 'cats': 7, 'samoyeds': 2, 'pomeranians': 3, 'akitas': 0, 'vizslas': 0,
+                       'goldfish': 5, 'trees': 3, 'cars': 2, 'perfumes': 1}
+
 def day16_split():
     with open('day16.txt', 'r') as f:
         lines = f.readlines()
@@ -15,18 +18,12 @@ def day16_parse():
 
 def day16_pt1():
     lines = day16_parse()
-    machine_results = {'children': 3, 'cats': 7, 'samoyeds': 2, 'pomeranians': 3, 'akitas': 0, 'vizslas': 0,
-                       'goldfish': 5, 'trees': 3, 'cars': 2, 'perfumes': 1}
-
     for k, v in lines.items():
         if all(item in machine_results.items() for item in v.items()):
-            print(k)
+            return k
 
 def day16_pt2():
     lines = day16_parse()
-    machine_results = {'children': 3, 'cats': 7, 'samoyeds': 2, 'pomeranians': 3, 'akitas': 0, 'vizslas': 0,
-                       'goldfish': 5, 'trees': 3, 'cars': 2, 'perfumes': 1}
-
     for k, v in lines.items():
         a = [x for x in v.items()]
         hit = []
@@ -34,12 +31,12 @@ def day16_pt2():
             comp = machine_results[x]
             if x in ('cats', 'trees') and y > comp:
                 hit += [True]
-            elif x in ('pomeranians', 'goldfish') and y < comp:
+                continue
+            if x in ('pomeranians', 'goldfish') and y < comp:
                 hit += [True]
-            elif y == comp:
+                continue
+            if y == comp and x not in ('cats', 'trees', 'pomeranians', 'goldfish'):
                 hit += [True]
+                continue
         if len(hit) == 3:
             print(k)
-
-
-
