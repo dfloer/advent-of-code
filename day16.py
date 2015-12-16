@@ -40,3 +40,22 @@ def day16_pt2():
                 continue
         if len(hit) == 3:
             print(k)
+
+
+def day16_pt2_a():
+    lines = day16_parse()
+    res = None
+    for x, y in lines.items():
+        if len({k: v for k, v in y.items() if check_valid(k, v)}) == 3:
+            res = x
+    print(res)
+
+
+def check_valid(x, y):
+    comp = machine_results[x]
+    if x in ('cats', 'trees') and y > comp:
+        return True
+    if x in ('pomeranians', 'goldfish') and y < comp:
+        return True
+    if y == comp and x not in ('cats', 'trees', 'pomeranians', 'goldfish'):
+        return True
