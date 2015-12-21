@@ -36,22 +36,6 @@ def day19_parse():
     return out_counts, out_positions, to_replace, mapping
 
 
-# Not use anywhere anymore.
-def create_numeric(mapping):
-    idx = 0
-    numeric_mapping = {}
-    for k in mapping.keys():
-        numeric_mapping[k] = idx
-        idx += 1
-    for chemicals in mapping.values():
-        for chemical in chemicals:
-            elements = split_elements(chemical)
-            for element in elements:
-                if element not in numeric_mapping:
-                    numeric_mapping[element] = idx
-                    idx +=1
-    return numeric_mapping
-
 def split_elements(s):
     return [x for x in re.split("([A-Z][^A-Z]*)", s) if x]
 
@@ -96,69 +80,4 @@ def day19_pt2():
     s = str(symbol_count) + " - " + str(count_rn_ar) + " - " + str(2 * count_y) + " - 1 = "
     print(s)
     print(res)
-
-
-def day19_pt2_inner2(target_molecule, mapping, current_molecule, target_length, steps):
-    pass
-    # if target_molecule == current_molecule:
-    #     return steps
-    # else:
-        # next_choices = sorted(chain.from_iterable(mapping.values()), key=lambda x: len(split_elements(x)))
-
-        # for x in split_elements(current_molecule):
-        #     replace_values = mapping[x]
-        #     replace_positions = [i for i in range(len(current_molecule)) if current_molecule[i] == x]
-        #     print(replace_values, replace_positions)
-        #     for y in replace_positions:
-        #         for z in replace_values:
-        #             print("curr", current_molecule)
-        #             print("y", y, "z", z)
-        #             new_molecule = [a for a in current_molecule]
-        #             print("nm1", new_molecule)
-        #             new_molecule[y] = z
-        #             print("nm2", new_molecule)
-        #             print(target_molecule, mapping, new_molecule, target_length, steps + 1)
-        #             print(len(new_molecule))
-        #             res = day19_pt2_inner(target_molecule, mapping, new_molecule, target_length, steps + 1)
-        #             if res:
-        #                 return res
-
-
-def day19_pt2_inner(target_molecule, mapping, current_molecule, target_length, steps):
-    if len(current_molecule) > target_length:
-        return []
-    elif current_molecule == target_molecule:
-        return steps
-    else:
-        print(current_molecule)
-        # for x in current_molecule:
-        #     replace_values = mapping[x[0]]
-        #     replace_positions = [i for i in range(len(current_molecule)) if current_molecule[i] == x]
-        #     for y in replace_positions:
-        #         for z in replace_values:
-        #             print("curr", current_molecule)
-        #             print("y", y, "z", z)
-        #             new_molecule = [a for a in current_molecule]
-        #             print("nm1", new_molecule)
-        #             new_molecule[y] = z
-        #             print("nm2", new_molecule)
-        # #             print(target_molecule, mapping, new_molecule, target_length, steps + 1)
-        # #             print(len(new_molecule))
-        #             res = day19_pt2_inner(target_molecule, mapping, new_molecule, target_length, steps + 1)
-        #             if res:
-        #                 return res
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    return res
