@@ -1,5 +1,6 @@
 from collections import defaultdict
-from functools import reduce
+import re
+from itertools import chain
 
 
 def day19_split():
@@ -13,8 +14,6 @@ def day19_parse():
     mapping = defaultdict(list)
     s_map = {}
     s_idx = 0
-    d_map = {}
-    d_idx = 0
 
     for l in lines:
         s = l.split()
@@ -24,9 +23,6 @@ def day19_parse():
             if k not in s_map:
                 s_map[k] = s_idx
                 s_idx += 1
-            if v not in d_map:
-                d_map[v] = d_idx
-                d_idx += 1
             mapping[k] += [v]
     to_replace = lines[-1]
     out_counts = {}
@@ -37,13 +33,33 @@ def day19_parse():
     for k, v in s_map.items():
         out_positions[k] = [i for i in range(len(to_replace)) if to_replace.startswith(k, i)]
 
-    return s_map, d_map, out_counts, out_positions, to_replace, mapping
+    return out_counts, out_positions, to_replace, mapping
 
-def day19():
-    s_map, d_map, out_counts, out_positions, start_molecule, mapping = day19_parse()
+
+# Not use anywhere anymore.
+def create_numeric(mapping):
+    idx = 0
+    numeric_mapping = {}
+    for k in mapping.keys():
+        numeric_mapping[k] = idx
+        idx += 1
+    for chemicals in mapping.values():
+        for chemical in chemicals:
+            elements = split_elements(chemical)
+            for element in elements:
+                if element not in numeric_mapping:
+                    numeric_mapping[element] = idx
+                    idx +=1
+    return numeric_mapping
+
+def split_elements(s):
+    return [x for x in re.split("([A-Z][^A-Z]*)", s) if x]
+
+
+def day19_pt1():
+    out_counts, out_positions, start_molecule, mapping = day19_parse()
     replacements = set()
 
-    # print(start_molecule)
     for k, v in out_positions.items():
         for spot in v:
             for x in mapping[k]:
@@ -51,6 +67,98 @@ def day19():
                 end = start_molecule[spot + len(k) :]
                 s = start + x + end
                 replacements.add(s)
-                # print("k:", k, "spot:", spot, "start:", start, "end:", end, "replacement:", x, "out:", s)
-    # print(replacements)
-    print(len(replacements))
+    return len(replacements)
+
+
+def day19_pt2():
+    out_counts, out_positions, target_molecule, mapping = day19_parse()
+
+    """
+    I tried and tried to come up with a programming solution, and decided to try to math my way out of the problem.
+    I noted that Rn and Ar always occurred on the LHS and never on the RHS. As well, Y always appears in between
+        Rn and Ar, and it always appears in between another symbol and Rn and Ar.
+    Rn and Ar are always paired, so I decided to treat them as ( and ), with Y being +. This means I have s(s) or
+        s(s+s) or s(s+s+s) as the possibilities. This means that () will require 0 steps to replace, because they
+        never show up on the RHS. So we find the total number of elements (symbols) and subtract the number or Rn and Ar
+        from that.
+    Next, things with + (Y) in them reduce like s+s to just s, so each + replacement lowers the total by 2x the number of Ys.
+    So equation is: # symbols - # Rn's - # of Ar's - 2 * # of Ys = steps.
+    I put this in, and it was too high. ): The math seems good, so I subtracted -1 and got the correct answer, because
+        experience suggests it was an off-by-one error.
+    I wish I knew why I'd made the error, and I'll update this when I figure it out.
+    """
+
+    target_molecule = split_elements(target_molecule)
+    symbol_count = len(target_molecule)
+    count_rn_ar = target_molecule.count('Rn') + target_molecule.count('Ar')
+    count_y = target_molecule.count('Y')
+    res = symbol_count - count_rn_ar - 2 * count_y - 1
+    s = str(symbol_count) + " - " + str(count_rn_ar) + " - " + str(2 * count_y) + " - 1 = "
+    print(s)
+    print(res)
+
+
+def day19_pt2_inner2(target_molecule, mapping, current_molecule, target_length, steps):
+    pass
+    # if target_molecule == current_molecule:
+    #     return steps
+    # else:
+        # next_choices = sorted(chain.from_iterable(mapping.values()), key=lambda x: len(split_elements(x)))
+
+        # for x in split_elements(current_molecule):
+        #     replace_values = mapping[x]
+        #     replace_positions = [i for i in range(len(current_molecule)) if current_molecule[i] == x]
+        #     print(replace_values, replace_positions)
+        #     for y in replace_positions:
+        #         for z in replace_values:
+        #             print("curr", current_molecule)
+        #             print("y", y, "z", z)
+        #             new_molecule = [a for a in current_molecule]
+        #             print("nm1", new_molecule)
+        #             new_molecule[y] = z
+        #             print("nm2", new_molecule)
+        #             print(target_molecule, mapping, new_molecule, target_length, steps + 1)
+        #             print(len(new_molecule))
+        #             res = day19_pt2_inner(target_molecule, mapping, new_molecule, target_length, steps + 1)
+        #             if res:
+        #                 return res
+
+
+def day19_pt2_inner(target_molecule, mapping, current_molecule, target_length, steps):
+    if len(current_molecule) > target_length:
+        return []
+    elif current_molecule == target_molecule:
+        return steps
+    else:
+        print(current_molecule)
+        # for x in current_molecule:
+        #     replace_values = mapping[x[0]]
+        #     replace_positions = [i for i in range(len(current_molecule)) if current_molecule[i] == x]
+        #     for y in replace_positions:
+        #         for z in replace_values:
+        #             print("curr", current_molecule)
+        #             print("y", y, "z", z)
+        #             new_molecule = [a for a in current_molecule]
+        #             print("nm1", new_molecule)
+        #             new_molecule[y] = z
+        #             print("nm2", new_molecule)
+        # #             print(target_molecule, mapping, new_molecule, target_length, steps + 1)
+        # #             print(len(new_molecule))
+        #             res = day19_pt2_inner(target_molecule, mapping, new_molecule, target_length, steps + 1)
+        #             if res:
+        #                 return res
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
