@@ -39,7 +39,8 @@ def flatten(l):
 
 
 def day21(boss_hp=104, boss_damage=8, boss_armor=1):
-    costs = []
+    min_costs = []
+    max_costs = []
     weapons = shop_items['Weapons']
     armors = shop_items['Armor']
     rings = shop_items['Rings']
@@ -60,9 +61,12 @@ def day21(boss_hp=104, boss_damage=8, boss_armor=1):
 
         # if run_battle(boss_hp, boss_damage, boss_armor, 100, hero_damage, hero_armor):
         if calc_winner(boss_hp, boss_damage, boss_armor, 100, hero_damage, hero_armor):
-            costs += [cost]
-    minimum = min(costs)
-    return minimum
+            min_costs += [cost]
+        else:
+            max_costs += [cost]
+    minimum = min(min_costs)
+    maximum = max(max_costs)
+    return minimum, maximum
 
 
 def calc_winner(boss_hp, boss_damage, boss_armor, hero_hp, hero_damage, hero_armor):
