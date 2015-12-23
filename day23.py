@@ -12,11 +12,9 @@ def day23_parse():
     return output
 
 
-def day23():
+def day23(reg_a=0, reg_b=0):
     instructions = day23_parse()
     offset = 0
-    reg_a = 0
-    reg_b = 0
     while True:
         try:
             inst = instructions[offset]
