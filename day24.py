@@ -8,9 +8,9 @@ def day24_split():
     return lines
 
 
-def day24():
+def day24(containers=3):
     package_weights = [int(x) for x in day24_split()]
-    total_weight = sum(package_weights) / 3
+    total_weight = sum(package_weights) / containers
 
     # Find the smallest subset that gives the correct total_weight.
     # Note that this assumes that the other two will balance exactly in half, but that isn't necessarily the case.
