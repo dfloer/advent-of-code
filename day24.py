@@ -1,3 +1,7 @@
+from itertools import combinations
+from functools import reduce
+from operator import mul
+
 def day24_split():
     with open('day24.txt', 'r') as f:
         lines = f.readlines()
@@ -6,17 +10,19 @@ def day24_split():
 
 def day24():
     package_weights = [int(x) for x in day24_split()]
-    #result = [[0], [0], [0]]
-    container_sum = [0, 0, 0]
-    container_prod = [1, 1, 1]
-    # The algorithm I'm trying here is to take the items, largest to smallest and put them in the bin that is lightest.
-    sorted_weights = sorted(package_weights)[::-1]
-    for package in sorted_weights:
-        lightest_value = min(container_sum)
-        lightest_container = container_sum.index(lightest_value)
+    total_weight = sum(package_weights) / 3
 
-        container_sum[lightest_container] += package
-        container_prod[lightest_container] *= package
-    print(container_sum, container_prod)
+    # Find the smallest subset that gives the correct total_weight.
+    # Note that this assumes that the other two will balance exactly in half, but that isn't necessarily the case.
+    for x in range(1, len(package_weights)):
+        possible_combos = list(combinations(package_weights, x))
+        candidates = [x for x in possible_combos if sum(x) == total_weight]
+        if len(candidates) > 0:  # That actually has values in it...
+            break
+    # Now find the lightest of all of the possible candidates.
+    lightest = min(candidates, key=lambda x: sum(x))
+    # And finally calculate the quantum entanglement.
+    qe = reduce(mul, lightest)
+    return qe
 
 
