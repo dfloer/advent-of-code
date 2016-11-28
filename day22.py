@@ -1,6 +1,7 @@
 import random
 
-def day22(boss_hp, boss_dmg):
+
+def day22(boss_hp, boss_dmg, hardcore=False):
     spells = {
         'Magic Missile': {'mana': 53, 'damage': 4, 'turns': 0, 'heal': 0, 'armor': 0, 'regen': 0},
         'Drain': {'mana': 73, 'damage': 2, 'turns': 0, 'heal': 2, 'armor': 0, 'regen': 0},
@@ -10,24 +11,32 @@ def day22(boss_hp, boss_dmg):
     }
     best_mana_use = 1E10
 
-    for _ in range(1000000):
+    # This needs to be relatively high for an answer to be found. Yeah, random brute force is painful.
+    iterations = 100000000
+    for _ in range(iterations):
         timers = {'Shield': 0, 'Poison': 0, 'Recharge': 0}
         hero_stats = {'mana': 500, 'hp': 50, 'armor': 0}
         boss_stats = {'hp': boss_hp, 'damage': boss_dmg}
 
-        mana = simulation(spells, hero_stats, boss_stats, timers)
+        mana = simulation(spells, hero_stats, boss_stats, timers, hardcore)
         if mana < best_mana_use:
             best_mana_use = mana
     return best_mana_use
 
 
-def simulation(spells, hero_stats, boss_stats, timers):
+def simulation(spells, hero_stats, boss_stats, timers, hardcore):
     mana_use_counter = 0
     player_turn = True
     while True:
         start_turn(spells, hero_stats, boss_stats, timers)
 
         if player_turn:
+            # hard mode has a -1 hp loss by the player per turn.
+            if hardcore:
+                hero_stats['hp'] -= 1
+                if hero_stats['hp'] <= 0:
+                    return 1E11
+
             # Choose a random spell, because it's the first way that came to mind.
             # Maybe BFS would have been better.
             spell_to_use = random.choice(list(spells.keys()))
