@@ -1,16 +1,18 @@
 from collections import OrderedDict
 
+
 def day1_split():
     with open('day1.txt', 'r') as f:
         lines = f.read().split(', ')
     return lines
 
 
-def day1(part1=True):
+def day1():
     lines = day1_split()
     loc = [0, 0]
     direction = 0
     visited = OrderedDict()
+    pt2_soln = 0
     for i in lines:
         turn = i[0 : 1]
         amount = int(i[1 :])
@@ -30,11 +32,12 @@ def day1(part1=True):
             else:
                 loc[1] -= 1
 
-            if not part1:
-                key = tuple(loc)
-                if key in visited.keys():
-                    return abs(loc[0]) + abs(loc[1])
-                else:
-                    visited[key] = 1
+            key = tuple(loc)
+            if key in visited.keys() and not pt2_soln:
+                pt2_soln = abs(loc[0]) + abs(loc[1])
+            else:
+                visited[key] = 1
 
-    return abs(loc[0]) + abs(loc[1])
+    pt1_soln = abs(loc[0]) + abs(loc[1])
+
+    return "Part1: {}, part2: {}".format(pt1_soln, pt2_soln)
