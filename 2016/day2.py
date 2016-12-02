@@ -4,7 +4,7 @@ def day2_split():
     return lines
 
 
-def day2():
+def day2_part1():
     lines = day2_split()
     instructions = [list(x) for x in lines]
     start = 5
@@ -36,3 +36,43 @@ def day2():
 
         code += [previous_button]
     return ''.join([str(x) for x in code])
+
+
+def day2_part2():
+    lines = day2_split()
+    instructions = [list(x) for x in lines]
+    start = [3, 1]
+    previous_button = start
+    code = []
+    for digit in instructions:
+        for move in digit:
+            x = 0
+            y = 0
+            if move == "D":
+                x = 1
+            elif move == "U":
+                x = -1
+            elif move == "R":
+                y = 1
+            else:
+                y = -1
+            x_inc = previous_button[0] + x
+            y_inc = previous_button[1] + y
+            next_button = get_keypad_value(x_inc, y_inc)
+
+            if next_button != 0:
+                previous_button = [previous_button[0] + x, previous_button[1] + y]
+        code += [get_keypad_value(previous_button[0], previous_button[1])]
+
+    return ''.join([str(x) for x in code])
+
+
+def get_keypad_value(x, y):
+    keypad = [[0, 0, 0, 0, 0, 0, 0],
+              [0, 0, 0, 1, 0, 0, 0],
+              [0, 0, 2, 3, 4, 0, 0],
+              [0, 5, 6, 7, 8, 9, 0],
+              [0, 0, 'A', 'B', 'C', 0, 0],
+              [0, 0, 0, 'D', 0, 0, 0],
+              [0, 0, 0, 0, 0, 0, 0]]
+    return keypad[x][y]
