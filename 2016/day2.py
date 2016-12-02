@@ -59,11 +59,9 @@ def day2_part2():
             x_inc = previous_button[0] + x
             y_inc = previous_button[1] + y
             next_button = get_keypad_value(x_inc, y_inc)
-
             if next_button != 0:
-                previous_button = [previous_button[0] + x, previous_button[1] + y]
+                previous_button = [x_inc, y_inc]
         code += [get_keypad_value(previous_button[0], previous_button[1])]
-
     return ''.join([str(x) for x in code])
 
 
