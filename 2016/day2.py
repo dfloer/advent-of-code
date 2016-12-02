@@ -32,8 +32,7 @@ def day2_part1():
                 amount = 0
             else:
                 pass
-            previous_button = previous_button + amount
-
+            previous_button += amount
         code += [previous_button]
     return ''.join([str(x) for x in code])
 
