@@ -12,7 +12,6 @@ def day2():
 
     code = []
     for digit in instructions:
-        print("start", previous_button)
         for move in digit:
             if move == "D":
                 amount = 3
