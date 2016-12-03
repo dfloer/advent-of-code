@@ -32,3 +32,16 @@ def day3_part2():
         if sides[0] + sides[1] <= sides[2]:
             count += 1
     return total - count
+
+
+def day3_part2a():
+    triangles = [x.split() for x in day3_split()]
+    count = 0
+    total = len(triangles)
+    for y in range(3):
+        for x in range(0, len(triangles), 3):
+            tri = [triangles[x + inc][y] for inc in range(3)]
+            sides = sorted([int(s) for s in tri])
+            if sides[0] + sides[1] <= sides[2]:
+                count += 1
+    return total - count
