@@ -1,12 +1,12 @@
 from hashlib import md5
 
 
-def day5(input):
+def day5_part1(input_text):
     password = []
     idx = 0
     while True:
         hash = md5()
-        to_hash = input + str(idx)
+        to_hash = input_text + str(idx)
         hash.update(to_hash.encode('utf-8'))
         candidate = hash.hexdigest()
         if candidate[:5] == '00000':
