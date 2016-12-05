@@ -27,7 +27,7 @@ def day4_part2():
     for x in stuff:
         room, room_id, _ = parse_line(x)
         room_text = caesar_cipher(room, room_id % 26)
-        if room_text.startswith("northpole"):
+        if "northpole" in room_text:
             return room, room_text, room_id
 
 
