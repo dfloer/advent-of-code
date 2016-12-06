@@ -9,9 +9,11 @@ def day6_split():
 
 def day6():
     data = day6_split()
-    res = ''
+    part1_res = ''
+    part2_res = ''
     rotated = list(zip(*data[::-1]))
     for line in rotated:
         counts = Counter(line).most_common()
-        res += counts[0][0]
-    return res
+        part1_res += counts[0][0]
+        part2_res += counts[-1][0]
+    return part1_res, part2_res
