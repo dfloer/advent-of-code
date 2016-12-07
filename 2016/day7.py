@@ -11,7 +11,6 @@ def day7_split():
 def day7():
     data = day7_split()
     count = 0
-    index = 1
     for x in data:
         split = re.split(r"\[(.*?)\]", x)
         inner_count = 0
@@ -21,8 +20,6 @@ def day7():
             #print(to_check)
             res = re.search(r"(.)(.)\2\1", to_check)
             if res:
-                print(index, split)
-                print("\n\n", res.group(), "\n\n")
                 # Input always has the form or alternating non-square and square brackets, with non last.
                 if idx % 2 == 0:  # Even numbered one, outside square brackets.
                     repeated = Counter(res.group()).most_common()  # looks for repeats of the form 'aaaa'
@@ -35,5 +32,4 @@ def day7():
                         inner_count = 0
                         break
         count += inner_count
-        index += 1
     return count
