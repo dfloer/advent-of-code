@@ -14,10 +14,8 @@ def day7():
     for x in data:
         split = re.split(r"\[(.*?)\]", x)
         inner_count = 0
-        #print(index, split)
         for idx in range(len(split)):
             to_check = split[idx]
-            #print(to_check)
             res = re.search(r"(.)(.)\2\1", to_check)
             if res:
                 # Input always has the form or alternating non-square and square brackets, with non last.
