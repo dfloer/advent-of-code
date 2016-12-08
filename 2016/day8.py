@@ -1,3 +1,6 @@
+from PIL import Image
+import tesserocr
+
 def day8_split():
     with open('day8.txt', 'r') as f:
         lines = f.read().splitlines()
@@ -39,6 +42,8 @@ def day8(screen_width=50, screen_height=6):
             print("unknown operations")
             break
     pprint_lists(pixels)
+    test = ocr(pixels)
+    print(test)
     return sum(flatten(pixels))
 
 
@@ -55,3 +60,21 @@ def pprint_lists(l):
                 c = '.'
             print(c, "", end='')
         print()
+
+def ocr(pixels):
+    # convert the array to a bw image.
+    height = len(pixels)
+    width = len(pixels[0])
+    img = Image.new('1', (width + 2, height + 2), 0)
+    for i in range(width):
+        for j in range(height):
+            img.putpixel((i, j), 0)
+    for i in range(width):
+        for j in range(height):
+            img.putpixel((i + 1, j + 1), pixels[j][i])
+    img = img.resize(((width + 2) * 100, (height + 2) * 100), Image.ANTIALIAS)
+    #img.save("day8.bmp", format="bmp")
+    try:
+        out = tesserocr.image_to_text(img)
+    except RuntimeError:
+        out = None
