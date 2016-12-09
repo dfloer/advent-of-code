@@ -28,19 +28,11 @@ def day8(screen_width=50, screen_height=6):
                 new_row = row[amount:] + row[:amount]
                 pixels[idx] = new_row
             elif direction == "column":
-                # Aww yiss. Rotate once, treat it like a column and then rotate 3 times. Yeah...
-                rotated_pixels = [list(a) for a in zip(*pixels[::-1])]
-                col = rotated_pixels[idx]
+                col = [x[idx] for x in pixels]
+                amount *= -1
                 new_col = col[amount:] + col[:amount]
-                rotated_pixels[idx] = new_col
-                pixels_a = [list(a) for a in zip(*rotated_pixels[::-1])]
-                pixels_b = [list(a) for a in zip(*pixels_a[::-1])]
-                pixels = [list(a) for a in zip(*pixels_b[::-1])]
-            else:
-                print("unknown direction")
-        else:
-            print("unknown operations")
-            break
+                for i, x in enumerate(pixels):
+                    x[idx] = new_col[i]
     pprint_lists(pixels)
     test = ocr(pixels)
     print(test)
