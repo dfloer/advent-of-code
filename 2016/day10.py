@@ -11,18 +11,25 @@ def day10(chip_a=61, chip_b=17):
     data = day10_split()
     bots = defaultdict(list)
     output = defaultdict(list)
-    res = 0
+    res = None
+    new_data = []
     for x in data:
         split = x.split()
-        print(bots)
         if split[0] == "value":
-            print(split)
+            #print(split)
             val = int(split[1])
             dest = int(split[-1])
-            print(val, dest)
+            #print(val, dest)
             bots[dest] += [val]
         else:
-            print(split)
+            new_data += [x]
+
+    while len(new_data) >= 0:
+        newer_data = []
+        for x in new_data:
+            split = x.split()
+            #print(bots)
+            #print(split)
             source = int(split[1])
             hi_out = False
             lo_out = False
@@ -32,23 +39,25 @@ def day10(chip_a=61, chip_b=17):
                 lo_out = True
             if split[-2] == "output":
                 hi_out = True
-            print(source, lo_out, low_dest, hi_out, high_dest)
+            #print(source, lo_out, low_dest, hi_out, high_dest)
             source_bot = bots[source]
-            print(source_bot)
+            #print(source_bot)
             if len(source_bot) == 2:
                 lo, hi = sorted(source_bot)
                 if lo == min(chip_a, chip_b) and hi == max(chip_a, chip_b):
-                    res = source_bot
+                    res = source
+                    return res
                 bots[source] = []
                 if not lo_out:
-                    bots[low_dest] = lo
+                    bots[low_dest] += [lo]
                 else:
-                    output[low_dest] = lo
+                    output[low_dest] += [lo]
                 if not hi_out:
-                    bots[high_dest] = hi
+                    bots[high_dest] += [hi]
                 else:
-                    output[high_dest] = hi
+                    output[high_dest] += [hi]
             else:
-                print("Skipped")
+                newer_data += [x]
+        new_data = newer_data
     return res
 
