@@ -16,20 +16,16 @@ def day10(chip_a=61, chip_b=17):
     for x in data:
         split = x.split()
         if split[0] == "value":
-            #print(split)
             val = int(split[1])
             dest = int(split[-1])
-            #print(val, dest)
             bots[dest] += [val]
         else:
             new_data += [x]
 
-    while len(new_data) >= 0:
+    while len(new_data) > 0:
         newer_data = []
         for x in new_data:
             split = x.split()
-            #print(bots)
-            #print(split)
             source = int(split[1])
             hi_out = False
             lo_out = False
@@ -39,14 +35,11 @@ def day10(chip_a=61, chip_b=17):
                 lo_out = True
             if split[-2] == "output":
                 hi_out = True
-            #print(source, lo_out, low_dest, hi_out, high_dest)
             source_bot = bots[source]
-            #print(source_bot)
             if len(source_bot) == 2:
                 lo, hi = sorted(source_bot)
                 if lo == min(chip_a, chip_b) and hi == max(chip_a, chip_b):
                     res = source
-                    return res
                 bots[source] = []
                 if not lo_out:
                     bots[low_dest] += [lo]
@@ -59,5 +52,5 @@ def day10(chip_a=61, chip_b=17):
             else:
                 newer_data += [x]
         new_data = newer_data
-    return res
+    return res, output[0][0] * output[1][0] * output[2][0]
 
