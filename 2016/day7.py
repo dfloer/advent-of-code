@@ -75,9 +75,6 @@ def check_valid(indexes):
                 # Use sets to eliminate duplicates in the same chunk.
                 v_s = set(v)
                 other_s = set(other)
-                # If the two sets are the same, then this is invalid.
-                if v_s == other_s:
-                    continue
                 possible_combinations = [(x % 2, y % 2) for x in v_s for y in other_s]
                 # For a pairing to be valid, one part needs to be in an even chunk and the other in an odd ([]) chunk.
                 if (1, 0) in possible_combinations or (0, 1) in possible_combinations:
