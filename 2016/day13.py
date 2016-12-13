@@ -1,9 +1,11 @@
 def day13(n=1350, goal_x=31, goal_y=39):
     x, y = (1, 1)
-    return find_path(n, x, y, goal_x, goal_y)
+    p1 = find_path(n, x, y, goal_x, goal_y, part1=True)
+    p2 = find_path(n, x, y, goal_x, goal_y, part1=False)
+    return p1, p2
 
 
-def find_path(n, x, y, goal_x, goal_y):
+def find_path(n, x, y, goal_x, goal_y, part1=True):
     """
     Simplified A* because we don't need to determine a heuristic, every possible choice is assumed to have equal weighting to get us to our goal.
     Search space is quite small (upper bound of ~1200 steps), so no major optimizations needed.
@@ -25,8 +27,10 @@ def find_path(n, x, y, goal_x, goal_y):
                 closed_set.add(neighbour)
                 open_set.add(neighbour)
         steps += 1
-        if (goal_x, goal_y) in open_set:
-                return steps
+        if (goal_x, goal_y) in open_set and part1:
+            return steps
+        if steps == 50 and not part1:
+            return len(closed_set)
 
 
 def is_wall(x, y, n):
@@ -42,4 +46,4 @@ def get_neighbours(x, y):
     Returns the up, down, left, and right neighbours of the given position, as long as they're +'ve.
     """
     out = [(x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)]
-    return [(a, b) for a, b in out if not a < 0 or not b < 0]
+    return [(a, b) for a, b in out if not a < 0 and not b < 0]
