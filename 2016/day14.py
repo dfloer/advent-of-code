@@ -2,7 +2,7 @@ from hashlib import md5
 from collections import OrderedDict
 
 
-def day14(inp="ahsbgdzn"):
+def day14(inp="ahsbgdzn", stretch=1):
     idx = 0
     good_candidates = OrderedDict()
     keys = OrderedDict()
@@ -11,7 +11,8 @@ def day14(inp="ahsbgdzn"):
         h = md5()
         to_hash = inp + str(idx)
         h.update(to_hash.encode('utf-8'))
-        candidate = h.hexdigest()
+        to_hash = h.hexdigest()
+        candidate = repeat_hash(to_hash, stretch)
         if find_rep(candidate, 3):
             good_candidates[idx] = find_rep(candidate, 3)
         if find_rep(candidate, 5):
@@ -31,6 +32,15 @@ def day14(inp="ahsbgdzn"):
                 if x == 63:
                     return i
         idx += 1
+
+
+def repeat_hash(to_hash, repeat=1):
+    # We need to repeat is once more for the last iteration.
+    for idx in range(repeat):
+        h = md5()
+        h.update(to_hash.encode('utf-8'))
+        to_hash = h.hexdigest()
+    return to_hash
 
 
 def find_rep(s, n=3):
