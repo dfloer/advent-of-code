@@ -19,10 +19,10 @@ def day15():
     t = 0
     while True:
         ps = []
-        for i,  v in enumerate(discs.values()):
+        for i, v in discs.items():
             c = v['c']
             p = v['p']
-            ps += [(c + i + t + 1) % p]
+            ps += [(c + i + t) % p]
         if sum(ps) == 0:
             return t
         t += 1
