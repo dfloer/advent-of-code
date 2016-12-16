@@ -1,6 +1,3 @@
-
-
-
 def day16(inp, disk_len=272):
     a = inp
     while len(a) <= disk_len:
@@ -10,7 +7,6 @@ def day16(inp, disk_len=272):
     while len(xs) % 2 == 0:
         xs = checksum(xs)
     return xs
-
 
 
 def dragon(a):
