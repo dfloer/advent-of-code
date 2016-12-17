@@ -9,18 +9,20 @@ def day17(inp):
     door_poss = "UDLR"
     bounds = (0, 1, 2, 3)
     q = [(start, [start], [])]
+    res = []
     while q:
         posn, path, dirs = q.pop(0)
         open_doors = [is_open(x) for x in get_hash4(s + ''.join(dirs))]
         for d in compress(door_poss, open_doors):
             nxt = get_move(d, posn)
             nx, ny = nxt
-            if nx not in bounds and ny not in bounds:
+            if nx not in bounds or ny not in bounds:
                 continue
             elif nxt == goal:
-                return ''.join(dirs + [d])
+                res += [''.join(dirs + [d])]
             else:
                 q += [(nxt, path + [nxt], dirs + [d])]
+    return res[0], len(res[-1])
 
 
 def is_open(x):
