@@ -8,7 +8,9 @@ def day17(inp):
     goal = (3, 3)
     door_poss = "UDLR"
     bounds = (0, 1, 2, 3)
-    q = [(start, [start], [])]
+    # I'm doing a BFS here.
+    q = []
+    q += [(start, [start], [])]
     res = []
     while q:
         posn, path, dirs = q.pop(0)
@@ -22,6 +24,7 @@ def day17(inp):
                 res += [''.join(dirs + [d])]
             else:
                 q += [(nxt, path + [nxt], dirs + [d])]
+    # A BFS will return the items in smallest to largest order, so the first item is the shortest string, and the last is the longest.
     return res[0], len(res[-1])
 
 
