@@ -6,10 +6,13 @@ def day19(elves):
 
     """
     For part 2 I did the first 10 iterations until I spotted a pattern. The pattern looks like:
-    1 (1=3^0)
-    1,2,3 (3=3^1)
-    1,2,3,5,7,9 (9=3^2)
-    1
+    1:1 (1=3^0)
+    2:1, 3:3 (3=3^1)
+    4:1, 5:2, 6:3, 7:5, 8:7, 9:9 (9=3^2)
+    10:1, 11:2. 12:3, 13:4, 14:5, 15:6, 16:7, 17:8 18:9, 19:11, 20:13, ..., 25:23, 26:25, 27:27.
+    28:1, 29:2, 30:3, ..., 52:25, 53:27, 54:27, 55:19, 56:31, ..., 79:77, 80:79, 81:81.
+    82:1 ..., 3^5:3^5 (3^5=243).
+    etc...
     I speculated that this pattern held then worked out a mathematical solution to produce it.
     The algorithm finds the largest power of 3 that is less than the number of elves.
     Then finds the difference between it and the power of 3 closest but lower than it,
@@ -25,7 +28,16 @@ def day19(elves):
         x = a
         i += 1
     pt2 = elves - x
-    return pt1, pt2
+
+    # If the given number of elves is a power of 3, return that power of 3.
+    if elves == x:
+        pt2_better = elves
+    else:
+        # Fudge is needed because the previous solution seems to miscount. Determined via trial-and-error.
+        # I need the fudge amount only if it's +'ve.
+        fudge = max(0, elves - 2 * x)
+        pt2_better = elves - x + fudge
+    return "Part1: {}, Part2: {}, Broken Part2: {}".format(pt1, pt2_better, pt2)
 
 
 def highest_one_bit(n):
