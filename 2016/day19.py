@@ -11,6 +11,10 @@ def day19(elves):
     1,2,3,5,7,9 (9=3^2)
     1
     I speculated that this pattern held then worked out a mathematical solution to produce it.
+    The algorithm finds the largest power of 3 that is less than the number of elves.
+    Then finds the difference between it and the power of 3 closest but lower than it,
+        noticing that they increase 1x after then until the next power of 3.
+    Note: This doesn't appear to work for all inputs. ):
     """
     i = 1
     x = 0
@@ -21,7 +25,6 @@ def day19(elves):
         x = a
         i += 1
     pt2 = elves - x
-    # 1410968 high, 1594323 high
     return pt1, pt2
 
 
