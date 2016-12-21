@@ -1,3 +1,6 @@
+from itertools import permutations
+
+
 def day21_split():
     with open('day21.txt', 'r') as f:
         lines = f.read().splitlines()
@@ -42,3 +45,12 @@ def day21(pw='abcdefgh'):
         else:
             print("WTF?")
     return ''.join(pw)
+
+
+def day21_part2(pw='fbgdceah'):
+    letters = 'abcdefgh'
+    possibles = permutations(letters, len(letters))
+    for p in possibles:
+        c = day21(p)
+        if c == pw:
+            return ''.join(p)
