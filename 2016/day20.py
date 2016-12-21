@@ -9,7 +9,9 @@ def day20():
     total_ips = 2 ** 32
     data.sort()
     idx = 0
+    allowed = 0
     ip = 0
+    first = False
     while ip < total_ips:
         start, end = data[idx]
         if ip >= start:
@@ -18,4 +20,8 @@ def day20():
                 continue
             idx += 1
         else:
-            return ip
+            if not first:
+                first = ip
+            allowed += 1
+            ip += 1
+    return first, allowed
