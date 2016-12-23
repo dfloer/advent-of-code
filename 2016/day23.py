@@ -1,3 +1,6 @@
+from math import factorial
+
+
 def day23_split():
     with open('day23.txt', 'r') as f:
         lines = f.read().splitlines()
@@ -90,3 +93,17 @@ def toggle(data, new_pc):
     new_inst = [new_op] + inst[1:]
     return new_inst
 
+
+def day23_lazy(a):
+    # For my input, this whole program is calcularing reg a's initial value + the two largest values in the input multiplied.
+    data = [x.split() for x in day23_split()]
+    v = [x for l in [x[1:] for x in data] for x in l]  # teim and flatten list of lists.
+    vals = []
+    for x in v:
+        try:
+            vals += [int(x)]
+        except ValueError:
+            continue
+    vals.sort()
+    d, b = vals[-2:]
+    return factorial(a) + (b * d)
