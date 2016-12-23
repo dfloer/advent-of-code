@@ -4,11 +4,21 @@ def day23_split():
     return lines
 
 
-def day23(av=7, bv=0, cv=0, dv=0):
+def day23(av=7, bv=0, cv=0, dv=0, part2=False):
     data = [x.split() for x in day23_split()]
     pc = 0
     regs = {'a': av, 'b': bv, 'c': cv, 'd': dv}
     while True:
+        #print(regs)
+        # This is replacing a very bad multiplication done by repeated additions in the program.
+        if pc == 4 and part2:
+            print(regs)
+            regs['a'] = regs['b'] * regs['d']
+            regs['c'] = 0
+            regs['d'] = 0
+            print(regs)
+            pc = 10
+            continue
         try:
             inst = data[pc]
         except IndexError:
