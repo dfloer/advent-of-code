@@ -8,7 +8,7 @@ def day24_split():
     return lines
 
 
-def day24():
+def day24(part2=False):
     data = day24_split()
     # create a dict with key of (x, y) anv value of the maze location.
     nums = [str(x) for x in range(10)]  # Only single digit numbers.
@@ -34,12 +34,18 @@ def day24():
         d = []
         if a[0] != 0:
             continue
-        for b in range(len(a) - 1):
-            c = a[b : b + 2]
-            d += [path_lens[c]]
+        if not part2:
+            for b in range(len(a) - 1):
+                c = a[b : b + 2]
+                d += [path_lens[c]]
+        else:
+            for b in range(len(a)):
+                c = a[b : b + 2]
+                if len(c) == 1:
+                    c = (c[0], 0)
+                d += [path_lens[c]]
         res += [sum(d)]
     return min(res)
-
 
 
 def neighbours(x, y):
