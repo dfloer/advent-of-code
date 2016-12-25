@@ -69,3 +69,14 @@ def day25():
         if out.startswith("01" * (len(out) // 2)):
             return x
         x += 1
+
+
+def day25_lazy(n=2730):
+    """
+    This almost certainly only works for my input.
+    2730 is 0b101010101010
+    """
+    data = [x.split() for x in day25_split()]
+    x = int(data[1][1])
+    y = int(data[2][1])
+    return n - x * y
