@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace AoC2017
+namespace Day1
 {
-    class Program
+    partial class Program
     {
         static void Main(string[] args)
         {
