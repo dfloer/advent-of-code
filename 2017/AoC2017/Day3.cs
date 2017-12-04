@@ -27,6 +27,8 @@ namespace Day3
             // Subtract this difference from the maximum possible manhattan distance.
             int pt1_res = dist_from_center - edge_other;
             System.Console.WriteLine("Day3 part1 solution: {0}", pt1_res);
+
+            // ToDo: implement part2 programattically. I Googled for the sequence and found it online.
         }
     }
 }
