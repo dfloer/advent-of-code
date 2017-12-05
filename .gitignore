@@ -63,3 +63,4 @@ bin/
 obj/
 *.csproj
 *.exe
+*.txt
