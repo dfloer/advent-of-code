@@ -11,6 +11,7 @@ namespace Day7
             System.IO.StreamReader file = new System.IO.StreamReader(@"day8.txt");
             string raw_line;
             Dictionary<string, int> register_file = new Dictionary<string, int>();
+            int highest_value = 0;
             while ((raw_line = file.ReadLine()) != null)
             {
                 List<string> line = raw_line.Split().ToList();
@@ -92,11 +93,17 @@ namespace Day7
                 {
                     amount = -1 * amount;
                 }
-                register_file[dest_reg] += amount;
+                int new_value = register_file[dest_reg] += amount;
+                register_file[dest_reg] = new_value;
+                if (new_value > highest_value)
+                {
+                    highest_value = new_value;
+                }
             }
             var reg_values = register_file.Values.ToList();
             reg_values.Sort();
             System.Console.WriteLine("Solution to Day8 Part1: {0}", reg_values[reg_values.Count - 1]);
+            System.Console.WriteLine("Solution to Day8 Part2: {0}", highest_value);
         }
     }
 }
