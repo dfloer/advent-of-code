@@ -14,6 +14,7 @@ namespace Day9
             var stack = new Stack<int>();
             bool garbage = false;
             int stack_sum = 0;
+            int garbage_sum = 0;
             while (idx < input_text.Length)
             {
                 char chr = input_text[idx];
@@ -39,9 +40,14 @@ namespace Day9
                 {
                     garbage = false;
                 }
+                else if (garbage)
+                {
+                    garbage_sum++;
+                }
                 idx++;
             }
             System.Console.WriteLine("Solution to Day9 Part1: {0}", stack_sum);
+            System.Console.WriteLine("Solution to Day9 Part2: {0}", garbage_sum);
         }
     }
 }
