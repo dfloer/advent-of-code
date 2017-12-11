@@ -14,6 +14,7 @@ namespace Day11
             int x = 0;
             int y = 0;
             int z = 0;
+            List<int> distances = new List<int>();
             foreach(string dir in split_input)
             {
                 switch (dir)
@@ -42,11 +43,12 @@ namespace Day11
                         x--;
                         y++;
                         break;
-                }                        
-            }
-            int steps = (Math.Abs(x) + Math.Abs(y) + Math.Abs(z)) / 2;
-            System.Console.WriteLine("Solution to Day11 Part1: {0}", steps);
-            //System.Console.WriteLine("Solution to Day11 Part2: {0}", );
+                }
+                int steps = (Math.Abs(x) + Math.Abs(y) + Math.Abs(z)) / 2;
+                distances.Add(steps);
+            }            
+            System.Console.WriteLine("Solution to Day11 Part1: {0}", distances.Last());
+            System.Console.WriteLine("Solution to Day11 Part2: {0}", distances.Max());
         }
     }
 }
