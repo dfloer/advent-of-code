@@ -22,10 +22,26 @@ namespace Day12
                 }
                 pipes.Add(src, dest);
             }
-            HashSet<int> connected = depth_first_search(pipes, 0);
-
-            System.Console.WriteLine("Solution to Day12 Part1: {0}", connected.Count());
-            //System.Console.WriteLine("Solution to Day12 Part2: {0}", pt2_res);
+            int subgraph_count = 0;
+            int pt1 = 0;
+            HashSet <int> all_connected = new HashSet<int>();
+            while (all_connected.Count < pipes.Count)
+            {
+                // This is a hashset containing all the unvisited nodes. Take the first node for DFS.
+                HashSet<int> to_visit = new HashSet<int>(new HashSet<int>(pipes.Keys).Except(all_connected));
+                int root = to_visit.First();
+                // This is a hashset of all the nodes connected to the root node.
+                HashSet<int> connected = depth_first_search(pipes, root);
+                if (pt1 == 0)
+                {
+                    pt1 = connected.Count();
+                }
+                // Finally, we don't want to visit the node again if we've already done so.
+                all_connected.UnionWith(connected);
+                subgraph_count++;
+            }
+            System.Console.WriteLine("Solution to Day12 Part1: {0}", pt1);
+            System.Console.WriteLine("Solution to Day12 Part2: {0}", subgraph_count);
         }
 
         static HashSet<int> depth_first_search(Dictionary<int, HashSet<int>> adj, int start)
