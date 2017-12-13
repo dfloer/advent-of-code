@@ -16,18 +16,21 @@ namespace Day13
                 List<string> line = raw_line.Split(new string[] {": " }, StringSplitOptions.None).ToList();
                 firewall_ranges[int.Parse(line[0])] = int.Parse(line[1]);
             }
-            List<int> steps = new List<int>();
-            foreach(KeyValuePair<int, int> entry in firewall_ranges)
+            int pt2 = 0;
+            int pt1 = 0;
+            int res = -1;
+            int start_offset = 0;
+            while(res != 0)
             {
-                int picosecond = entry.Key;
-                int res = update_scanner_posn(firewall_ranges[picosecond], picosecond);
-                // We're only in the same spot as the scanner if res is 0, otherwise we escaped it.
-                if (res == 0)
-                    steps.Add(firewall_ranges[picosecond] * picosecond);
+                res = firewall_run(firewall_ranges, start_offset);
+                if (start_offset == 0)
+                    pt1 = res;
+                pt2 = start_offset;
+                start_offset++;
+
             }
-            int pt1 = steps.Sum();
             System.Console.WriteLine("Solution to Day12 Part1: {0}", pt1);
-            //System.Console.WriteLine("Solution to Day12 Part2: {0}", pt2);
+            System.Console.WriteLine("Solution to Day12 Part2: {0}", pt2);
         }
         static int update_scanner_posn(int range, int picosecond)
         {
@@ -38,6 +41,19 @@ namespace Day13
                 return 2 * (range - 1) - offset;
             else
                 return offset;
+        }
+        static int firewall_run(Dictionary<int, int> ranges, int start_offset)
+        {
+            List<int> steps = new List<int>();
+            foreach (KeyValuePair<int, int> entry in ranges)
+            {
+                int picosecond = entry.Key;
+                int res = update_scanner_posn(entry.Value, picosecond + start_offset);
+                // We're only in the same spot as the scanner if res is 0, otherwise we escaped it.
+                if (res == 0)
+                    steps.Add(entry.Value * picosecond + start_offset);
+            }
+            return steps.Sum();
         }
     }
 }
