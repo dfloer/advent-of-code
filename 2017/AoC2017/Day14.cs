@@ -23,29 +23,6 @@ namespace Day14
             foreach (List<int> l in grid)
                 accum += l.Sum();
             System.Console.WriteLine("Solution to Day14 Part1: {0}", accum);
-            // Convert this into a problem like day 12.
-            /*Dictionary<int, HashSet<int>> adjacency_list = new Dictionary<int, HashSet<int>>();
-            foreach (int i in Enumerable.Range(0, 128))
-            {
-                foreach (int j in Enumerable.Range(0, 128))
-                {
-                    int idx = i * 128 + j;
-                    List<int> adjacent = get_lower_adjacent(grid, i, j);
-                    System.Console.WriteLine("i: {0}, j: {1}, adj: {2}, idx: {3}", i, j, adjacent.Count, idx);
-                    if (adjacent.Count == 0)
-                    {
-                        HashSet<int> temp = new HashSet<int>();
-                        temp.Add(idx);
-                        adjacency_list[idx] = temp;
-                    }
-                    else
-                    {
-                        HashSet<int> temp = new HashSet<int>(adjacent);
-                        adjacency_list[idx] = temp;
-                    }
-                }
-            }
-            int subgraphs = count_subgraphs(adjacency_list);*/
             int subgraphs = traverse_matrix(grid);
             System.Console.WriteLine("Solution to Day14 Part2: {0}", subgraphs);
         }
@@ -125,83 +102,7 @@ namespace Day14
             string binary_string = String.Join(String.Empty, hex_string.Select(c => Convert.ToString(Convert.ToInt32(c.ToString(), 16), 2).PadLeft(4, '0')));
             return binary_string;
         }
-        // Copied more or less straight from day12 solution.
-        static HashSet<int> depth_first_search(Dictionary<int, HashSet<int>> adj, int start)
-        {
-            HashSet<int> connected = new HashSet<int>();
-            Stack<int> stack = new Stack<int>();
-            if (!adj.ContainsKey(start))
-            {
-                return connected;
-            }
-            stack.Push(start);
-            while (stack.Count > 0)
-            {
-                int vert = stack.Pop();
-                if (connected.Contains(vert))
-                {
-                    continue;
-                }
-                connected.Add(vert);
-                foreach (int next in adj[vert])
-                {
-                    if (!connected.Contains(next))
-                    {
-                        stack.Push(next);
-                    }
-                }
-            }
-            return connected;
-        }
-        static int count_subgraphs(Dictionary<int, HashSet<int>> grid)
-        {
-            int subgraph_count = 0;
-            int pt1 = 0;
-            HashSet<int> all_connected = new HashSet<int>();
-            while (all_connected.Count < grid.Count)
-            {
-                // This is a hashset containing all the unvisited nodes. Take the first node for DFS.
-                HashSet<int> to_visit = new HashSet<int>(new HashSet<int>(grid.Keys).Except(all_connected));
-                int root = to_visit.First();
-                // This is a hashset of all the nodes connected to the root node.
-                HashSet<int> connected = depth_first_search(grid, root);
-                if (pt1 == 0)
-                {
-                    pt1 = connected.Count();
-                }
-                // Finally, we don't want to visit the node again if we've already done so.
-                all_connected.UnionWith(connected);
-                subgraph_count++;
-            }
-            return subgraph_count;
-        }
-        static List<int> get_lower_adjacent(List<List<int>> arr, int row, int column)
-        {
-            int rows = arr.Count();
-            int columns = arr[0].Count();
-            List<int> result = new List<int>();
-
-            for (int j = row - 1; j <= row + 1; j++)
-            {
-                for (int i = column - 1; i <= column + 1; i++)
-                {
-                    // Will find all adjacent values.
-                    if (i >= 0 && j >= 0 && i < columns && j < rows && !(j == row && i == column))
-                    {
-                        // This should filter out the diagonals.
-                        if (!(((i == column + 1) && (j == row + 1)) || ((i == column - 1) && (j == row + 1)) || ((i == column + 1) && (j == row - 1)) || ((i == column - 1) && (j == row - 1))))
-                        {
-                            int val = arr[i][j];
-                            if (val == 1)
-                                result.Add(j * 128 + i);
-                            System.Console.WriteLine("i: {0}, j: {1}, val: {2}, row: {3}, col: {4}", i, j, val, row, column);
-                        }
-                    }
-                }
-            }
-            return result;
-        }
-
+        // Based on pseudocode from: https://stackoverflow.com/a/28596886/4355097
         static int traverse_matrix(List<List<int>> matrix)
         {
             int counter = 0;
@@ -214,7 +115,6 @@ namespace Day14
                 Tuple<int, int> node = unvisited.First();
                 int i = node.Item1;
                 int j = node.Item2;
-                System.Console.WriteLine("i: {0}, j: {1}, val: {2}, ", i, j, matrix[i][j]);
                 if (matrix[i][j] == 1)
                 {
                     counter++;
@@ -233,11 +133,11 @@ namespace Day14
                 unvisited.Remove(node);
                 if (matrix[i][j] == 1)
                 {
-                    if (j > 1)
+                    if (j > 0)
                         visit_node(matrix, i, j - 1, unvisited);
                     if (j < 128)
                         visit_node(matrix, i, j + 1, unvisited);
-                    if (i > 1)
+                    if (i > 0)
                         visit_node(matrix, i - 1, j, unvisited);
                     if (i < 128)
                         visit_node(matrix, i + 1, j, unvisited);
