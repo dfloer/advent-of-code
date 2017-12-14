@@ -10,23 +10,46 @@ namespace Day14
         {
             int hash_size = 256;
             string input = "ljoxqyyw";
-            int used_count = 0;
+            List<List<int>> grid = new List<List<int>>();
             foreach (int i in Enumerable.Range(0, 128))
             {
                 string row_seed = input + "-" + i.ToString();
                 string result = generate_knot_hash(hash_size, row_seed);
-                // Split the string into pieces because C# is stupid and doesn't have arbitrary length ints.
-                for (int j = 0; j < 32; j += 8)
+                string binary = hex_2_bin(result);
+                List<int> line = binary.Select(x => int.Parse(x.ToString())).ToList();
+                grid.Add(line);
+            }
+            int accum = 0;
+            foreach (List<int> l in grid)
+                accum += l.Sum();
+            System.Console.WriteLine("Solution to Day14 Part1: {0}", accum);
+            // Convert this into a problem like day 12.
+            /*Dictionary<int, HashSet<int>> adjacency_list = new Dictionary<int, HashSet<int>>();
+            foreach (int i in Enumerable.Range(0, 128))
+            {
+                foreach (int j in Enumerable.Range(0, 128))
                 {
-                    string to_convert = result.Substring(j, 8);
-                    uint temp = uint.Parse(to_convert, System.Globalization.NumberStyles.HexNumber);
-                    used_count += pop_count(temp);
+                    int idx = i * 128 + j;
+                    List<int> adjacent = get_lower_adjacent(grid, i, j);
+                    System.Console.WriteLine("i: {0}, j: {1}, adj: {2}, idx: {3}", i, j, adjacent.Count, idx);
+                    if (adjacent.Count == 0)
+                    {
+                        HashSet<int> temp = new HashSet<int>();
+                        temp.Add(idx);
+                        adjacency_list[idx] = temp;
+                    }
+                    else
+                    {
+                        HashSet<int> temp = new HashSet<int>(adjacent);
+                        adjacency_list[idx] = temp;
+                    }
                 }
             }
-            System.Console.WriteLine("Solution to Day12 Part1: {0}", used_count);
-            //System.Console.WriteLine("Solution to Day12 Part2: {0}", pt2);
+            int subgraphs = count_subgraphs(adjacency_list);*/
+            int subgraphs = traverse_matrix(grid);
+            System.Console.WriteLine("Solution to Day14 Part2: {0}", subgraphs);
         }
-
+        // Copied more or less straight from my day10 solution.
         static string generate_knot_hash(int hash_size, string input_string)
         {
             char[] lengths = input_string.ToCharArray();
@@ -102,12 +125,124 @@ namespace Day14
             string binary_string = String.Join(String.Empty, hex_string.Select(c => Convert.ToString(Convert.ToInt32(c.ToString(), 16), 2).PadLeft(4, '0')));
             return binary_string;
         }
-        static int pop_count(uint value)
+        // Copied more or less straight from day12 solution.
+        static HashSet<int> depth_first_search(Dictionary<int, HashSet<int>> adj, int start)
         {
-            value = value - ((value >> 1) & 0x55555555);
-            value = (value & 0x33333333) + ((value >> 2) & 0x33333333);
-            value = ((value + (value >> 4) & 0xF0F0F0F) * 0x1010101) >> 24;
-            return unchecked((int)value);
+            HashSet<int> connected = new HashSet<int>();
+            Stack<int> stack = new Stack<int>();
+            if (!adj.ContainsKey(start))
+            {
+                return connected;
+            }
+            stack.Push(start);
+            while (stack.Count > 0)
+            {
+                int vert = stack.Pop();
+                if (connected.Contains(vert))
+                {
+                    continue;
+                }
+                connected.Add(vert);
+                foreach (int next in adj[vert])
+                {
+                    if (!connected.Contains(next))
+                    {
+                        stack.Push(next);
+                    }
+                }
+            }
+            return connected;
+        }
+        static int count_subgraphs(Dictionary<int, HashSet<int>> grid)
+        {
+            int subgraph_count = 0;
+            int pt1 = 0;
+            HashSet<int> all_connected = new HashSet<int>();
+            while (all_connected.Count < grid.Count)
+            {
+                // This is a hashset containing all the unvisited nodes. Take the first node for DFS.
+                HashSet<int> to_visit = new HashSet<int>(new HashSet<int>(grid.Keys).Except(all_connected));
+                int root = to_visit.First();
+                // This is a hashset of all the nodes connected to the root node.
+                HashSet<int> connected = depth_first_search(grid, root);
+                if (pt1 == 0)
+                {
+                    pt1 = connected.Count();
+                }
+                // Finally, we don't want to visit the node again if we've already done so.
+                all_connected.UnionWith(connected);
+                subgraph_count++;
+            }
+            return subgraph_count;
+        }
+        static List<int> get_lower_adjacent(List<List<int>> arr, int row, int column)
+        {
+            int rows = arr.Count();
+            int columns = arr[0].Count();
+            List<int> result = new List<int>();
+
+            for (int j = row - 1; j <= row + 1; j++)
+            {
+                for (int i = column - 1; i <= column + 1; i++)
+                {
+                    // Will find all adjacent values.
+                    if (i >= 0 && j >= 0 && i < columns && j < rows && !(j == row && i == column))
+                    {
+                        // This should filter out the diagonals.
+                        if (!(((i == column + 1) && (j == row + 1)) || ((i == column - 1) && (j == row + 1)) || ((i == column + 1) && (j == row - 1)) || ((i == column - 1) && (j == row - 1))))
+                        {
+                            int val = arr[i][j];
+                            if (val == 1)
+                                result.Add(j * 128 + i);
+                            System.Console.WriteLine("i: {0}, j: {1}, val: {2}, row: {3}, col: {4}", i, j, val, row, column);
+                        }
+                    }
+                }
+            }
+            return result;
+        }
+
+        static int traverse_matrix(List<List<int>> matrix)
+        {
+            int counter = 0;
+            HashSet<Tuple<int, int>> unvisited = new HashSet<Tuple<int, int>>();
+            foreach (int x in Enumerable.Range(0, 128))
+                foreach (int y in Enumerable.Range(0, 128))
+                    unvisited.Add(new Tuple<int, int>(x, y));
+            while (unvisited.Count() > 0)
+            {
+                Tuple<int, int> node = unvisited.First();
+                int i = node.Item1;
+                int j = node.Item2;
+                System.Console.WriteLine("i: {0}, j: {1}, val: {2}, ", i, j, matrix[i][j]);
+                if (matrix[i][j] == 1)
+                {
+                    counter++;
+                    visit_node(matrix, i, j, unvisited);
+                }
+                else
+                    unvisited.Remove(node);
+            }
+            return counter;
+        }
+        static void visit_node(List<List<int>> matrix, int i, int j, HashSet<Tuple<int, int>> unvisited)
+        {
+            Tuple<int, int> node = new Tuple<int, int>(i, j);
+            if (unvisited.Contains(node))
+            {
+                unvisited.Remove(node);
+                if (matrix[i][j] == 1)
+                {
+                    if (j > 1)
+                        visit_node(matrix, i, j - 1, unvisited);
+                    if (j < 128)
+                        visit_node(matrix, i, j + 1, unvisited);
+                    if (i > 1)
+                        visit_node(matrix, i - 1, j, unvisited);
+                    if (i < 128)
+                        visit_node(matrix, i + 1, j, unvisited);
+                }
+            }
         }
     }
 }
