@@ -14,22 +14,11 @@ namespace Day16
             foreach(string move in dance_moves)
             {
                 char inst = move.First();
-                /*System.Console.WriteLine(move);
-                foreach (var x in programs)
-                    System.Console.Write(x);
-                System.Console.WriteLine("");*/
                 switch (inst)
                 {
                     case 's':
                         int num = int.Parse(move.Substring(1));
-                        /*System.Console.WriteLine(num);
-                        foreach (var x in programs)
-                            System.Console.Write(x);
-                        System.Console.WriteLine("");*/
                         programs = rotate(programs, num);
-                        /*foreach (var x in programs)
-                            System.Console.Write(x);
-                        System.Console.WriteLine("");*/
                         break;
                     case 'x':
                         List<string> temp_x = move.Substring(1).Split('/').ToList();
