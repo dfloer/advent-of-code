@@ -68,7 +68,7 @@ namespace Day18
                         long x = registers[reg];
                         if (x != 0)
                         {
-                            registers[reg] = freqs.Pop();
+                            //registers[reg] = freqs.Pop();
                             if (pt1 == 0)
                                 pt1 = registers[reg];
                             pc_offset = 42424242; // For now, this will halt program execution.
@@ -82,7 +82,34 @@ namespace Day18
                 }
                 program_counter += pc_offset;
             }
-            System.Console.WriteLine("Solution to Day18 Part1: {0}", pt1);
+            List<long> to_sort = freqs.ToList();
+            System.Console.WriteLine("Solution to Day18 Part1: {0}", to_sort[0]);
+            /* Algorithm implements bubble sort.
+             * It takes the numbers generated initially and then reverse sorts them.
+             * The answer ends up being the number of iterations of bubble sort, divided by two (because two programs doing the work)
+             * multiplied by the number of elements to get the total number of times a number would have been passed between the two.*/
+            int iters = 1;
+            bool swapped = false;
+            while(true)
+            {
+                swapped = false;
+                for (int i = to_sort.Count() - 1; i > 0; i--)
+                {
+                    long a = to_sort[i];
+                    long b = to_sort[i - 1];
+                    if(b > a)
+                    {
+                        to_sort[i] = b;
+                        to_sort[i - 1] = a;
+                        swapped = true;
+                    }
+                }
+                iters++;
+                if (!swapped)
+                    break;
+            }
+            long pt2 = (iters / 2) * to_sort.Count();
+            System.Console.WriteLine("Solution to Day18 Part2: {0}", pt2);
         }
     }
 }
