@@ -23,6 +23,7 @@ namespace Day19
             char dir = 'd';
             int x = 0;
             int y = start;
+            int steps = 1;
             // (0, 0) is top left corner.
             List<char> letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray().ToList();
             List<char> result = new List<char>();
@@ -35,7 +36,10 @@ namespace Day19
                 {
                     result.Add(val);
                     if (val == 'A') // A appears to be the end in the given input.
+                    {
+                        //steps++;
                         break;
+                    }
                 }
                 else if (val == '+')
                 {
@@ -57,9 +61,11 @@ namespace Day19
                         y++;
                         break;
                 }
+                steps++;
             }
             string pt1 = new string(result.ToArray());
             System.Console.WriteLine("Solution to Day19 Part1: {0}", pt1);
+            System.Console.WriteLine("Solution to Day19 Part2: {0}", steps);
         }
         static char get_neighbours(List<List<char>> grid, int x, int y, char dir)
         {
