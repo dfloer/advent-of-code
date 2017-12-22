@@ -12,6 +12,10 @@ namespace Day21
             string raw_line;
             int iters = 5;
             Dictionary<List<List<char>>, List<List<char>>> rules = new Dictionary<List<List<char>>, List<List<char>>>();
+            List<List<char>> grid = new List<List<char>>();
+            grid.Add(".#.".ToCharArray().ToList());
+            grid.Add("..#".ToCharArray().ToList());
+            grid.Add("###".ToCharArray().ToList());
             int xxx = 0;
             while ((raw_line = file.ReadLine()) != null)
             {
@@ -25,17 +29,21 @@ namespace Day21
                 List<List<char>> rotate_90 = rotate(match_rule); // Doesn't rotate. ???
                 List<List<char>> rotate_180 = rotate(rotate_90); // Actually 90.
                 List<List<char>> rotate_270 = rotate(rotate_180); // actually 180.
-                List<List<char>> rotate_360 = rotate(rotate_270); // Actually 270.
+                //List<List<char>> rotate_360 = rotate(rotate_270); // Actually 270.
                 List<List<char>> flip_vertical = flip_vert(match_rule);
                 List<List<char>> flip_horizontal = flip_horiz(match_rule);
                 rules[rotate_90] = rule_result;
                 rules[rotate_180] = rule_result;
                 rules[rotate_270] = rule_result;
+                //rules[rotate_360] = rule_result;
                 rules[flip_vertical] = rule_result;
                 rules[flip_horizontal] = rule_result;
-                if (xxx == 47)
+                if (grid.SequenceEqual(match_rule) || grid.SequenceEqual(rotate_90)
+                    || grid.SequenceEqual(rotate_180) || grid.SequenceEqual(rotate_270)
+                    /*|| grid.SequenceEqual(rotate_360)*/ || grid.SequenceEqual(flip_vertical)
+                    || grid.SequenceEqual(flip_horizontal) || xxx == 47)
                 {
-                    System.Console.WriteLine("Result: ");
+                    System.Console.WriteLine("Result at {0}: ", xxx);
                     print_array(rule_result);
                     System.Console.WriteLine("Match:");
                     print_array(match_rule);
@@ -45,19 +53,19 @@ namespace Day21
                     print_array(rotate_180);
                     System.Console.WriteLine("Match 270:");
                     print_array(rotate_270);
-                    System.Console.WriteLine("Match 360:");
-                    print_array(rotate_360);
+                    //System.Console.WriteLine("Match 360:");
+                    //print_array(rotate_360);
                     System.Console.WriteLine("vertical flip:");
                     print_array(flip_vertical);
                     System.Console.WriteLine("horizontal flip:");
                     print_array(flip_horizontal);
+                    System.Console.WriteLine("test1: {0}.", flip_horizontal.SequenceEqual(rotate_90));
+                    System.Console.WriteLine("test2: {0}.", flip_horizontal.Equals(rotate_90));
+                    System.Console.WriteLine("test3: {0}.", flip_horizontal == rotate_90);
                 }
                 xxx++;
             }
-            List<List<char>> grid = new List<List<char>>();
-            grid.Add(".#.".ToCharArray().ToList());
-            grid.Add("..#".ToCharArray().ToList());
-            grid.Add("###".ToCharArray().ToList());
+            System.Console.WriteLine("Rules size: {0}", rules.Count);
             for (int i = 0; i < iters; i++)
             {
                 int n = grid[0].Count;
@@ -176,7 +184,7 @@ namespace Day21
         static void print_array(List<List<char>> arr)
         {
             foreach (List<char> line in arr)
-                System.Console.WriteLine(String.Join("", line));
+                System.Console.WriteLine("[{0}]", String.Join("", line));
         }
     }
 }
