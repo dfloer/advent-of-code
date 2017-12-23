@@ -27,6 +27,14 @@ namespace Day22
                     nodes[key] = temp[src_row_idx][src_col_idx];
                 }
             }
+            var pt2_nodes_copy = nodes.ToDictionary(entry => entry.Key, entry => entry.Value);
+            int pt1 = part1(nodes);
+            System.Console.WriteLine("Solution to Day22 Part1: {0}", pt1);
+            int pt2 = part2(pt2_nodes_copy);
+            System.Console.WriteLine("Solution to Day22 Part2: {0}", pt2);
+        }
+        static int part1(Dictionary<string, char> nodes)
+        {
             int new_infected = 0;
             int row_posn = 0;
             int col_posn = 0;
@@ -60,7 +68,7 @@ namespace Day22
                     new_infected++;
                 }
                 //Step 3.
-                switch(dir)
+                switch (dir)
                 {
                     case 0:  //up
                         row_posn--;
@@ -76,8 +84,77 @@ namespace Day22
                         break;
                 }
             }
-            // 4994 low. 5000 low.
-            System.Console.WriteLine("Solution to Day22 Part1: {0}", new_infected);
+            return new_infected;
+        }
+        static int part2(Dictionary<string, char> nodes)
+        {
+            int new_infected = 0;
+            int row_posn = 0;
+            int col_posn = 0;
+            int dir = 0; //0 is up, 1 is right, 2 is down, 3 is left.
+            for (int step = 0; step < 10000000; step++)
+            {
+                string node_key = row_posn + "x" + col_posn;
+                char value = '.';
+                try
+                {
+                    value = nodes[node_key];
+                }
+                catch (KeyNotFoundException)
+                {
+                    nodes[node_key] = '.';
+                }
+                // Step 1.
+                switch (value)
+                {
+                    case '#':
+                        dir = (dir + 1) % 4;  // right
+                        break;
+                    case '.':
+                        dir = (dir + 3) % 4;  // left
+                        break;
+                    case 'F':
+                        dir = (dir + 2) % 4;  // Reverse direction.
+                        break;
+                    case 'W':
+                        dir = dir + 0;  // Continue the same way.
+                        break;
+                }
+                // Step 2.
+                switch (value)
+                {
+                    case '.':
+                        nodes[node_key] = 'W';
+                        break;
+                    case 'W':
+                        nodes[node_key] = '#';
+                        new_infected++;
+                        break;
+                    case '#':
+                        nodes[node_key] = 'F';
+                        break;
+                    case 'F':
+                        nodes[node_key] = '.';
+                        break;
+                }
+                //Step 3.
+                switch (dir)
+                {
+                    case 0:  //up
+                        row_posn--;
+                        break;
+                    case 1:  // right
+                        col_posn++;
+                        break;
+                    case 2:  // down
+                        row_posn++;
+                        break;
+                    case 3:  // left
+                        col_posn--;
+                        break;
+                }
+            }
+            return new_infected;
         }
     }
 }
