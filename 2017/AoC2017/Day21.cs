@@ -11,11 +11,12 @@ namespace Day21
             System.IO.StreamReader file = new System.IO.StreamReader(@"day21.txt");
             string raw_line;
             int iters = 5;
-            Dictionary<List<string>, List<string>> rules = new Dictionary<List<string>, List<string>>();
+            Dictionary<string, List<string>> rules = new Dictionary<string, List<string>>();
             List<string> grid = new List<string>();
-            grid.Add(".#.".ToString());
-            grid.Add("..#".ToString());
-            grid.Add("###".ToString());
+            grid.Add("###");
+            grid.Add("..#");            
+            grid.Add(".#.");
+            string grid_test_string = ".#./..#/###";
             int xxx = 0;
             while ((raw_line = file.ReadLine()) != null)
             {
@@ -24,24 +25,33 @@ namespace Day21
                 string last = temp.Last();
                 List<string> match_rule = parse_rule(first);
                 List<string> rule_result = parse_rule(last);
-                rules[match_rule] = rule_result;
+                rules[String.Join("/", match_rule.ToArray())] = rule_result;
                 //Handle the 3 rotations and 2 flips right now.
-                List<string> rotate_90 = rotate(match_rule); // Doesn't rotate. ???
-                List<string> rotate_180 = rotate(rotate_90); // Actually 90.
-                List<string> rotate_270 = rotate(rotate_180); // actually 180.
-                //List<string> rotate_360 = rotate(rotate_270); // Actually 270.
+                List<string> rotate_90 = rotate(match_rule);
+                List<string> rotate_180 = rotate(rotate_90);
+                List<string> rotate_270 = rotate(rotate_180);
+                //string rotate_360 = rotate(rotate_270); // Actually 270.
                 List<string> flip_vertical = flip_vert(match_rule);
                 List<string> flip_horizontal = flip_horiz(match_rule);
-                rules[rotate_90] = rule_result;
-                rules[rotate_180] = rule_result;
-                rules[rotate_270] = rule_result;
+                rules[String.Join("/", rotate_90.ToArray())] = rule_result;
+                rules[String.Join("/", rotate_180.ToArray())] = rule_result;
+                rules[String.Join("/", rotate_270.ToArray())] = rule_result;
                 //rules[rotate_360] = rule_result;
-                rules[flip_vertical] = rule_result;
-                rules[flip_horizontal] = rule_result;
-                if (grid.SequenceEqual(match_rule) || grid.SequenceEqual(rotate_90)
-                    || grid.SequenceEqual(rotate_180) || grid.SequenceEqual(rotate_270)
-                    /*|| grid.SequenceEqual(rotate_360)*/ || grid.SequenceEqual(flip_vertical)
-                    || grid.SequenceEqual(flip_horizontal) || xxx == 47)
+                rules[String.Join("/", flip_vertical.ToArray())] = rule_result;
+                rules[String.Join("/", flip_horizontal.ToArray())] = rule_result;
+                string grid_test = String.Join("/", grid);
+                //if (grid.SequenceEqual(match_rule) || grid.SequenceEqual(rotate_90)
+                //    || grid.SequenceEqual(rotate_180) || grid.SequenceEqual(rotate_270)
+                //    /*|| grid.SequenceEqual(rotate_360)*/ || grid.SequenceEqual(flip_vertical)
+                //    || grid.SequenceEqual(flip_horizontal))
+                if (grid_test.SequenceEqual(String.Join("/", match_rule))
+                    || grid_test.SequenceEqual(String.Join("/", rotate_90))
+                    || grid_test.SequenceEqual(String.Join("/", rotate_180))
+                    || grid_test.SequenceEqual(String.Join("/", rotate_270))
+                    /*|| grid.SequenceEqual(rotate_360)*/
+                    || grid_test.SequenceEqual(String.Join("/", flip_vertical))
+                    || grid_test.SequenceEqual(String.Join("/", flip_horizontal))
+                    || xxx == -1)
                 {
                     System.Console.WriteLine("Result at {0}: ", xxx);
                     print_array(rule_result);
@@ -59,13 +69,20 @@ namespace Day21
                     print_array(flip_vertical);
                     System.Console.WriteLine("horizontal flip:");
                     print_array(flip_horizontal);
-                    System.Console.WriteLine("test1: {0}.", flip_horizontal.SequenceEqual(rotate_90));
-                    System.Console.WriteLine("test2: {0}.", flip_horizontal.Equals(rotate_90));
-                    System.Console.WriteLine("test3: {0}.", flip_horizontal == rotate_90);
+                    //System.Console.WriteLine("test1: {0}.", flip_vertical.SequenceEqual(rotate_270));
+                    //System.Console.WriteLine("test2: {0}.", flip_vertical.Equals(rotate_270));
+                    //System.Console.WriteLine("test3: {0}.", flip_vertical == rotate_270);
+                    //System.Console.WriteLine("test4: {0}.", String.Join("/", flip_vertical.ToArray())
+                    //    .SequenceEqual(String.Join("/", rotate_270.ToArray())));
+                    //System.Console.WriteLine("{0}, {1}", String.Join("/", flip_vertical.ToArray()),
+                    //    String.Join("/", rotate_270.ToArray()));
                 }
                 xxx++;
+                //break;
             }
             System.Console.WriteLine("Rules size: {0}", rules.Count);
+            //foreach (var x in rules.Keys)
+            //    System.Console.WriteLine(x);
             for (int i = 0; i < iters; i++)
             {
                 int n = grid[0].Length;
@@ -91,8 +108,10 @@ namespace Day21
                     {
                         List<string> square = grab_square(grid, row_idx, col_idx, step);
                         print_array(square);
-                        square = rules[square];
-                        results = add_square(square, results, row_idx, col_idx, step);
+                        string key = String.Join("/", square.ToArray());
+                        System.Console.WriteLine("dict key as str: \"{0}\"", key);
+                        List<string> new_square = rules[key];
+                        results = add_square(new_square, results, row_idx, col_idx, step);
                     }
                 }
                 grid = results;
@@ -109,7 +128,7 @@ namespace Day21
             var rule = input_string.Split('/').ToList();
             List<string> res = new List<string>();
             foreach (var line in rule)
-                res.Add(line.ToString());
+                res.Add(line);
             return res;
         }
         static List<string> rotate(List<string> arr)
@@ -146,13 +165,15 @@ namespace Day21
         static List<string> flip_horiz(List<string> arr)
         {
             List<string> res = new List<string>();
-            int n = arr[0].Length;
+            /*int n = arr[0].Length;
             for (int i = 0; i < n; i++)
             {
                 string tt = arr[i];
                 tt.Reverse();
                 res.Add(tt);
-            }
+            }*/
+            foreach (string line in arr)
+                res.Add(reverse_string(line));
             return res;
         }
         static List<string> grab_square(List<string> arr, int row_idx, int col_idx, int n)
@@ -161,7 +182,7 @@ namespace Day21
             for(int i = row_idx; i < row_idx + n; i++)
             {
                 string row = arr[i];
-                string new_row = row.Skip(col_idx).Take(n).ToString();
+                string new_row = row.Substring(col_idx, n);
                 res.Add(new_row);
             }
             return res;
@@ -189,7 +210,13 @@ namespace Day21
         static void print_array(List<string> arr)
         {
             foreach (string line in arr)
-                System.Console.WriteLine("[{0}]", String.Join("", line));
+                System.Console.WriteLine(" [{0}] ", line);
+        }
+        static string reverse_string(string s)
+        {
+            char[] charArray = s.ToCharArray();
+            Array.Reverse(charArray);
+            return new string(charArray);
         }
     }
 }
