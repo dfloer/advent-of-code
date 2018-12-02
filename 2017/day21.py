@@ -44,15 +44,8 @@ def lights_enhance(lights, rules):
     new_size = size * (dim + 1) // dim
     # New, empty grid for the lights.
     new_lights = np.empty((new_size, new_size), dtype=bool)
-    for i in range(0, size, dim):
-        for j in range(0, size, dim):
-            new_i = int(i / 2 * 3)
-            new_j = int(j / 2 * 3)
-            # For some reason, the above formula doesn't hold in this specific case.
-            if i == 6 and dim == 3:
-                new_i = 8
-            if j == 6 and dim == 3:
-                new_j = 8
+    for i, new_i in zip(range(0, size, dim), range(0, new_size, dim + 1)):
+        for j, new_j in zip(range(0, size, dim), range(0, new_size, dim + 1)):
             square = lights[i : i + dim, j : j + dim]
             new_square = rules[square.tobytes()]
             new_lights[new_i : new_i + 1 + dim, new_j : new_j + 1 + dim] = new_square
@@ -75,3 +68,4 @@ def day21_part1(iterations=5):
 
 if __name__ == "__main__":
     print(f"Solution to day21 part1: {day21_part1()}")
+    print(f"Solution to day21 part1: {day21_part1(18)}")
