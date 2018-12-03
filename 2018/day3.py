@@ -18,7 +18,7 @@ def parse(lines):
     return res
 
 
-def day3_part1():
+def day3():
     data = parse(day3_split())
     fabric = defaultdict(list)
     for elf_id, claim in data.items():
@@ -28,11 +28,16 @@ def day3_part1():
             for y in range(start[1], start[1] + size[1]):
                 fabric[(x, y)] += [elf_id]
     total = 0
-    for f in fabric.values():
-        if len(f) >= 2:
+    overlap = set()
+    for _, ids in fabric.items():
+        if len(ids) >= 2:
             total += 1
-    return total
+            for x in ids:
+                overlap.add(x)
+    pt2 = list(set(data.keys()) - overlap)[0]
+    return total, pt2
 
 
 if __name__ == "__main__":
-    print(f"Solution to day 1 part 1: {day3_part1()}")
+    print(f"Solution to day 3 part 1: {day3()[0]}")
+    print(f"Solution to day 3 part 1: {day3()[1]}")
