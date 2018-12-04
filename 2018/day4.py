@@ -7,6 +7,7 @@ def day4_split():
         lines = f.read().splitlines()
     return lines
 
+
 def parse():
     inp = day4_split()
     ds = "%Y-%m-%d %H:%M"
@@ -41,9 +42,24 @@ def day4():
         if sleeping_time > highest:
             highest = sleeping_time
             highest_guard = k
-
     # For that guard, figure out which minute was most spent asleep.
-    sleep_times = sleep_tracker[highest_guard]
+    most_asleep, _ = find_most_asleep_minute(sleep_tracker[highest_guard])
+
+    # Do the same for all guards (part 2).
+    worst_minute = 0
+    worst_count = 0
+    worst_guard = 0
+    for k, v in sleep_tracker.items():
+        worst, count = find_most_asleep_minute(v)
+        if count > worst_count:
+            worst_count = count
+            worst_minute = worst
+            worst_guard = k
+
+    return highest_guard * most_asleep, worst_guard * worst_minute
+
+
+def find_most_asleep_minute(sleep_times):
     minutes = [0 for _ in range(60)]
     for x in range(0, len(sleep_times), 2):
         start, end = sleep_times[x], sleep_times[x + 1]
@@ -52,14 +68,9 @@ def day4():
                 continue
             else:
                 minutes[y] += 1
-    most_asleep = minutes.index(max(minutes))
-    return highest_guard * most_asleep
-
-
-
-
+    return minutes.index(max(minutes)), max(minutes)
 
 
 if __name__ == "__main__":
-    print(f"Solution to day 3 part 1: {day4()}")
-    # print(f"Solution to day 3 part 1: {day4()}")
+    print(f"Solution to day 3 part 1: {day4()[0]}")
+    print(f"Solution to day 3 part 1: {day4()[1]}")
