@@ -39,5 +39,5 @@ def react(polymer, all_pairs):
 
 if __name__ == "__main__":
     pt1, pt2 = day5()
-    print(f"Solution to day 3 part 1: {pt1}")
-    print(f"Solution to day 3 part 1: {pt2}")
+    print(f"Solution to day 5 part 1: {pt1}")
+    print(f"Solution to day 5 part 2: {pt2}")

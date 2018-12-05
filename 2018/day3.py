@@ -40,4 +40,4 @@ def day3():
 
 if __name__ == "__main__":
     print(f"Solution to day 3 part 1: {day3()[0]}")
-    print(f"Solution to day 3 part 1: {day3()[1]}")
+    print(f"Solution to day 3 part 2: {day3()[1]}")

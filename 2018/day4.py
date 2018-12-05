@@ -72,5 +72,5 @@ def find_most_asleep_minute(sleep_times):
 
 
 if __name__ == "__main__":
-    print(f"Solution to day 3 part 1: {day4()[0]}")
-    print(f"Solution to day 3 part 1: {day4()[1]}")
+    print(f"Solution to day 4 part 1: {day4()[0]}")
+    print(f"Solution to day 4 part 2: {day4()[1]}")
