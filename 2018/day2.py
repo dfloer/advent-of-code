@@ -48,4 +48,4 @@ def str_cmp(lines):
 
 if __name__ == "__main__":
     print(f"Solution to day 2 part 1: {day2_part1()}")
-    print(f"Solution to day 2 part 1: '{day2_part2()}'")
+    print(f"Solution to day 2 part 2: '{day2_part2()}'")
