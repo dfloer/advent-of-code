@@ -43,14 +43,17 @@ def day9():
 
 
 def print_values(positions, bbox):
+    print('')
     x1, x2, y1, y2 = bbox
     for y in range(y1, y2 + 1):
+        print('   ', end='')
         for x in range(x1, x2 + 1):
             if (x, y) in [(a, b) for a, b, _ in positions.keys()]:
                 print('#', end='')
             else:
-                print('.', end='')
+                print(' ', end='')
         print('')
+    print('')
 
 
 def find_bbox(coords):
