@@ -1,8 +1,3 @@
-import colorama
-from collections import Counter
-
-colorama.init()
-
 def day13_split():
     with open('day13.txt', 'r') as f:
         lines = f.readlines()
@@ -12,192 +7,69 @@ def day13_split():
 def parse():
     lines = day13_split()
     tracks = {}
-    # for l in lines:
-    #     print(l, end='')
+    mine_carts = []
+    directions = {"<": -1, "v": +1j, ">": +1, "^": -1j}
+    all_parts = {"<": "-", "v": "|", ">": "-", "^": "|"}
+    # After getting stuck for several hours trying to solve this the old way, I did some research on maze algorithms.
+    # And found that you can represent mazes using complex numbers, so I'm trying that out now.
     for y, line in enumerate(lines):
         for x, e in enumerate(line):
-            if e == '^':
-                track = find_loop_y((x, y), lines, -1)
-                tracks[(y, x)] = track
-            elif e == 'v':
-                track = find_loop_y((x, y), lines, -1)
-                tracks[(x, y)] = track
-            # if e == '>':
-            #     track = find_loop_x((x, y), lines, 1)
-            #     tracks[(x, y)] = track
-            # elif e == '<':
-            #     track = find_loop_x((x, y), lines, -1)
-            #     tracks[(x, y)] = track
-    return tracks
+            if e in ('<', '>', 'v', '^'):
+                direction = directions[e]
+                new_cart = {"current_location": x + y * 1j, "current_direction": direction, "current_cross_direction": 0}
+                mine_carts += [new_cart]
+                track_part = all_parts[e]
+            else:
+                track_part = e
+            # Only care about when a cart changes direction.
+            if track_part in ('\\', '/', '+'):
+                tracks[(x + y * 1j)] = track_part
+    return tracks, mine_carts
 
 
-def find_loop_y(start, tracks, y_direction):
-    start_x, start_y = start
-    y = start_y
-    x = start_x
-    corner = []
-    # Go from the start position to the first corner, up or down.
-    while True:
-        e = tracks[y][x]
-        if e == '\\':
-            corner += [(x, y)]
-            break
-        elif e == '/':
-            corner += [(x, y)]
-            break
+def corner_turn(next_part, mine_cart):
+    if next_part == "+":
+        # cart can either turn forward, right or left. I missed this part of the problem completely for several hours...
+        mine_cart["current_direction"] *= -1j * 1j ** mine_cart["current_cross_direction"]
+        mine_cart["current_cross_direction"] = (mine_cart["current_cross_direction"] + 1) % 3
+    # Note that all of these are with a +'ve y-axis downwards instead of the normal up. Yep, that got me too...
+    elif next_part == "/":
+        if mine_cart["current_direction"].real == 0:
+            mine_cart["current_direction"] *= 1j  # up to right, down to left.
         else:
-            y += y_direction
-    # Find the other corner.
-    y_direction = -y_direction
-    y = start_y
-    while True:
-        e = tracks[y][x]
-        if e == '\\':
-            x_direction = -1
-            if y_direction == 1:
-                x_direction = 1
-            corner += [(x, y)]
-            break
-        elif e == '/':
-            x_direction = 1
-            if y_direction == 1:
-                x_direction = -1
-            corner += [(x, y)]
-            break
+            mine_cart["current_direction"] *= -1j  # right to up, left to down
+    elif next_part == "\\":
+        if mine_cart["current_direction"].real == 0:
+            mine_cart["current_direction"] *= -1j  # down to right, up to left
         else:
-            y += y_direction
-    # Find a third corner. As they are rectangles, we can infer the last corner.
-    x += x_direction
-    while True:
-        e = tracks[y][x]
-        if e == '\\':
-            corner += [(x, y)]
-            break
-        elif e == '/':
-            corner += [(x, y)]
-            break
-        else:
-            x += x_direction
-
-    corner += [(corner[2][0], corner[0][1])]
-    path = set()
-    test = []
-    ma = max(corner)
-    mi = min(corner)
-    print(corner)
-    for a in range(mi[0], ma[0]):
-        path.add((a, mi[1]))
-        path.add((a, ma[1]))
-        test += [(a, mi[1])]
-        test += [(a, ma[1])]
-    for b in range(mi[1], ma[1]):
-        path.add((mi[0], b))
-        path.add((ma[0], b))
-        test += [(mi[0], b)]
-        test += [(ma[0], b)]
-    print(len(test), len(path))
-    return path
-
-
-def find_loop_x(start, tracks, x_direction):
-    start_x, start_y = start
-    e = tracks[start_y][start_x]
-    y = start_y
-    x = start_x
-    corner = []
-    # Go from the start position to the first corner, left or right.
-    while True:
-        e = tracks[y][x]
-        # print(x, y, e)
-        if e == '\\':
-            corner += [(x, y)]
-            break
-        elif e == '/':
-            corner += [(x, y)]
-            break
-        else:
-            x += x_direction
-    # Find the other corner.
-    x_direction = -x_direction
-    x = start_x
-    while True:
-        e = tracks[y][x]
-        # print(x, y, e)
-        if e == '\\':
-            y_direction = -1
-            if x_direction == 1:
-                y_direction = 1
-            corner += [(x, y)]
-            break
-        elif e == '/':
-            y_direction = 1
-            if x_direction == 1:
-                y_direction = -1
-            corner += [(x, y)]
-            break
-        else:
-            x += x_direction
-    # Find a third corner. As they are rectangles, we can infer the last corner.
-    y += y_direction
-    while True:
-        e = tracks[y][x]
-        # print(x, y, e)
-        if e == '\\':
-            corner += [(x, y)]
-            break
-        elif e == '/':
-            corner += [(x, y)]
-            break
-        else:
-            y += y_direction
-    corner += [(corner[0][0], corner[2][1])]
-    path = set()
-    ma = max(corner)
-    mi = min(corner)
-    for a in range(mi[0], ma[0]):
-        path.add((a, mi[1]))
-        path.add((a, ma[1]))
-    for b in range(mi[1], ma[1] + 1):
-        path.add((mi[0], b))
-        path.add((ma[0], b))
-
-
-    # for c in corner:
-    #     path.add(c)
-    return path
+            mine_cart["current_direction"] *= 1j  # right to down, left to up
+    return mine_cart
 
 
 def day13():
-    res = parse()
-    # print(res)
-    print_debug(res)
-
-
-def print_debug(tracks):
-    all_tracked = []
-    for k, v in tracks.items():
-        all_tracked += v
-    raw = day13_split()
-    rows = 150
-    cols = 150
-    t = ('<', '>', 'v', '^')
-    for r in range(rows):
-        for c in range(cols):
+    tracks, mine_carts = parse()
+    while True:
+        # Important!
+        mine_carts.sort(key=lambda k: (k["current_location"].imag, k["current_location"].real))
+        for idx, mine_cart in enumerate(mine_carts):
+            # update the cart's position
+            mine_cart["current_location"] += mine_cart["current_direction"]
+            # Check and see if we just ran into a cart.
+            for other_cart in mine_carts:
+                if other_cart != mine_cart:
+                    a = other_cart["current_location"]
+                    b = mine_cart["current_location"]
+                    if a == b:
+                        x_coord = int(a.real)
+                        y_coord = int(a.imag)
+                        return f"{x_coord},{y_coord}"
             try:
-                e = raw[r][c]
-            except IndexError:
-                e = '#'
-            if (c, r) in all_tracked and e not in t:
-                print(colorama.Style.BRIGHT + colorama.Fore.MAGENTA + e, end='')
-            elif e in t:
-                print(colorama.Style.BRIGHT + colorama.Fore.CYAN + e, end='')
-            else:
-                print(colorama.Style.NORMAL + colorama.Fore.GREEN + e, end='')
-        print('')
-
-
-
+                track_part = tracks[mine_cart["current_location"]]
+            except KeyError:
+                track_part = ' '
+                tracks[mine_cart["current_location"]] = track_part
+            mine_carts[idx] = corner_turn(track_part, mine_cart)
 
 
 if __name__ == "__main__":
-    print(f"\nSolution to day 13 part 1: {day13()}")
+    print(f"Solution to day 13 part 1: {day13()}")
