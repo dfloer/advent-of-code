@@ -9,9 +9,7 @@ def parse():
     return n
 
 
-def day14():
-    start_num = parse()
-    print(start_num)
+def day14_part1(start_num):
     recipes = [3, 7]
     elf_1 = 0
     elf_2 = 1
@@ -27,6 +25,24 @@ def day14():
             return ''.join([str(x) for x in res])
 
 
+def day14_part2(start_num):
+    recipes = [3, 7]
+    elf_1 = 0
+    elf_2 = 1
+    start_num = str(start_num)
+    while True:
+        s = str(recipes[elf_1] + recipes[elf_2])
+        recipes += [int(x) for x in s]
+        elf_1 = (elf_1 + recipes[elf_1] + 1) % len(recipes)
+        elf_2 = (elf_2 + recipes[elf_2] + 1) % len(recipes)
+        s = ''.join(str(x) for x in recipes[-len(start_num) : ])
+        # I have no idea why this second check is needed.
+        s2 = ''.join(str(x) for x in recipes[-len(start_num) - 1 : -1])
+        if s == start_num or s2 == start_num:
+            r = ''.join(str(x) for x in recipes)
+            return r.index(start_num)
+
+
 def print_recipes(recipes, elf_1, elf_2):
     for idx, r in enumerate(recipes):
         if idx == elf_1:
@@ -38,6 +54,7 @@ def print_recipes(recipes, elf_1, elf_2):
     print()
 
 
-
 if __name__ == "__main__":
-    print(f"Solution to day 14 part 1: {day14()}")
+    n = parse()
+    print(f"Solution to day 14 part 1: {day14_part1(n)}")
+    print(f"Solution to day 14 part 2: {day14_part2(n)}")
