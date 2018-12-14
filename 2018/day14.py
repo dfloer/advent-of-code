@@ -6,41 +6,23 @@ def day14_split():
 
 def parse():
     n = int(day14_split()[0])
-    return n
+    return str(n)
 
 
-def day14_part1(start_num):
-    recipes = [3, 7]
+def day14(start_num):
+    recipes = "37"
     elf_1 = 0
     elf_2 = 1
-    while True:
-        s = str(recipes[elf_1] + recipes[elf_2])
-        recipes += [int(x) for x in s]
-        elf_1 += recipes[elf_1] + 1
-        elf_1 %= len(recipes)
-        elf_2 += recipes[elf_2] + 1
-        elf_2 %= len(recipes)
-        res = recipes[start_num : start_num + 10]
-        if len(res) == 10:
-            return ''.join([str(x) for x in res])
-
-
-def day14_part2(start_num):
-    recipes = [3, 7]
-    elf_1 = 0
-    elf_2 = 1
-    start_num = str(start_num)
-    while True:
-        s = str(recipes[elf_1] + recipes[elf_2])
-        recipes += [int(x) for x in s]
-        elf_1 = (elf_1 + recipes[elf_1] + 1) % len(recipes)
-        elf_2 = (elf_2 + recipes[elf_2] + 1) % len(recipes)
-        # The slightly larger range is needed because a sum can add one or two results to the end of our list.
-        # And we don't want to miss the case where our number appears offset from the end rather than at the end.
-        s = ''.join(str(x) for x in recipes[-len(start_num) - 1 : ])
-        if start_num in s:
-            r = ''.join(str(x) for x in recipes)
-            return r.index(start_num)
+    # In general, this may not be safe to so, but as part2 happens long after part 1, we're good here.
+    while start_num not in recipes[-len(start_num) - 1 : ]:
+        a = int(recipes[elf_1])
+        b = int(recipes[elf_2])
+        recipes += str(a + b)
+        elf_1 = (elf_1 + a + 1) % len(recipes)
+        elf_2 = (elf_2 + b + 1) % len(recipes)
+    pt1 = recipes[int(start_num) : int(start_num) + 10]
+    pt2 = recipes.index(start_num)
+    return pt1, pt2
 
 
 def print_recipes(recipes, elf_1, elf_2):
@@ -55,6 +37,6 @@ def print_recipes(recipes, elf_1, elf_2):
 
 
 if __name__ == "__main__":
-    n = parse()
-    print(f"Solution to day 14 part 1: {day14_part1(n)}")
-    print(f"Solution to day 14 part 2: {day14_part2(n)}")
+    pt1, pt2 = day14(parse())
+    print(f"Solution to day 14 part 1: {pt1}")
+    print(f"Solution to day 14 part 2: {pt2}")
