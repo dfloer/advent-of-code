@@ -35,10 +35,10 @@ def day14_part2(start_num):
         recipes += [int(x) for x in s]
         elf_1 = (elf_1 + recipes[elf_1] + 1) % len(recipes)
         elf_2 = (elf_2 + recipes[elf_2] + 1) % len(recipes)
-        s = ''.join(str(x) for x in recipes[-len(start_num) : ])
-        # I have no idea why this second check is needed.
-        s2 = ''.join(str(x) for x in recipes[-len(start_num) - 1 : -1])
-        if s == start_num or s2 == start_num:
+        # The slightly larger range is needed because a sum can add one or two results to the end of our list.
+        # And we don't want to miss the case where our number appears offset from the end rather than at the end.
+        s = ''.join(str(x) for x in recipes[-len(start_num) - 1 : ])
+        if start_num in s:
             r = ''.join(str(x) for x in recipes)
             return r.index(start_num)
 
