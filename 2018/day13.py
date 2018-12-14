@@ -16,7 +16,7 @@ def parse():
         for x, e in enumerate(line):
             if e in ('<', '>', 'v', '^'):
                 direction = directions[e]
-                new_cart = {"current_location": x + y * 1j, "current_direction": direction, "current_cross_direction": 0}
+                new_cart = {"current_location": x + y * 1j, "current_direction": direction, "current_cross_direction": 0, "crashed": False}
                 mine_carts += [new_cart]
                 track_part = all_parts[e]
             else:
@@ -46,7 +46,7 @@ def corner_turn(next_part, mine_cart):
     return mine_cart
 
 
-def day13():
+def day13_part1():
     tracks, mine_carts = parse()
     while True:
         # Important!
@@ -71,5 +71,38 @@ def day13():
             mine_carts[idx] = corner_turn(track_part, mine_cart)
 
 
+def day13_part2():
+    tracks, mine_carts = parse()
+    while len(mine_carts) > 1:
+        # Important!
+        mine_carts.sort(key=lambda k: (k["current_location"].imag, k["current_location"].real))
+        for idx, mine_cart in enumerate(mine_carts):
+            if mine_cart["crashed"]:
+                continue
+            # update the cart's position
+            mine_cart["current_location"] += mine_cart["current_direction"]
+            # Check and see if we just ran into a cart.
+            for other_cart in mine_carts:
+                if other_cart != mine_cart:
+                    a = other_cart["current_location"]
+                    b = mine_cart["current_location"]
+                    if a == b:
+                        mine_cart["crashed"] = True
+                        other_cart["crashed"] = True
+                        break
+            try:
+                track_part = tracks[mine_cart["current_location"]]
+            except KeyError:
+                track_part = ' '
+                tracks[mine_cart["current_location"]] = track_part
+            mine_carts[idx] = corner_turn(track_part, mine_cart)
+        # Remove crashed carts.
+        mine_carts = [x for x in mine_carts if not x["crashed"]]
+    x_coord = int(mine_carts[0]["current_location"].real)
+    y_coord = int(mine_carts[0]["current_location"].imag)
+    return f"{x_coord},{y_coord}"
+
+
 if __name__ == "__main__":
-    print(f"Solution to day 13 part 1: {day13()}")
+    print(f"Solution to day 13 part 1: {day13_part1()}")
+    print(f"Solution to day 13 part 1: {day13_part2()}")
