@@ -56,6 +56,9 @@ def day16_part2():
     instructions, program = parse()
     matches = match_opcodes(instructions)
     opcode_mapping = {}
+    # This is actually quite fragile, as there seems to be several cases where this fails and I just got lucky.
+    # I need to better filter/move on when there are different opcodes that appear only once. I assume they'll eventually filter out.
+    # But this worked well enough for the puzzle, so it's staying as is for now.
     for idx in range(16):
         single = [(n, m) for n, m in matches.items() if len(m) == 1]
         opcode_number = instructions[single[0][0]]["op"][0]
