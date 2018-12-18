@@ -1,4 +1,5 @@
 from collections import Counter
+from operator import mul
 
 
 def day18_split():
@@ -31,7 +32,8 @@ def count_neighbours(x, y, board):
 
 def day18():
     board = parse()
-    for minute in range(10):
+    totals = {}
+    for minute in range(500):
         old_board = {k: v for k, v in board.items()}
         for a in range(50):
             for b in range(50):
@@ -48,13 +50,30 @@ def day18():
                         board[(a, b)] = '#'
                     else:
                         board[(a, b)] = '.'
-    total_trees = len([x for x in board.values() if x == '|'])
-    total_yards = len([x for x in board.values() if x == '#'])
-    return total_trees * total_yards
+        total_trees = len([x for x in board.values() if x == '|'])
+        total_yards = len([x for x in board.values() if x == '#'])
+        totals[minute] = [total_trees, total_yards]
 
+    p = {}
+    repeat = []
+    for i in range(1, len(totals)):
+        l = totals[i - 1]
+        t = totals[i]
+        x = l[0] * t[0] - l[1] * t[1]
+        if x in p:
+            v = sum([mul(*totals[a]) for a in range(p[x], i)])
+            repeat = [i, p[x], v]
+            break
+        p[x] = i
+    period = repeat[0] - repeat[1]
+    off = (1000000000 % period) + repeat[0]
 
-
+    pt1 = mul(*totals[9])
+    pt2 = mul(*totals[off - 1])
+    return pt1, pt2
 
 
 if __name__ == "__main__":
-    print(f"Solution to day 18 part 1: {day18()}")
+    pt1, pt2 = day18()
+    print(f"Solution to day 18 part 1: {pt1}")
+    print(f"Solution to day 18 part 1: {pt2}")
