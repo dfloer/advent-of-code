@@ -1,3 +1,6 @@
+from functools import reduce
+
+
 def day19_split():
     with open('day19.txt', 'r') as f:
         lines = f.readlines()
@@ -70,10 +73,18 @@ def run_opcode(opcode, a, b, c, registers):
     return new_registers
 
 
-def day19():
+def day19(r0=0):
+    """
+    What is the algorithm doing? Basically, it's calculating a number (stored in R4).
+    With that number, it very slowly find all of the factors of it.
+    And then sums all those factors together.
+    I noticed this by dropping R4's value into WolframAlpha, and noting that the factors added up to my answer for part 1.
+    So did this for part 2, with much faster code to short circuit the execution.
+    """
     ip, instructions = parse()
-    registers = [0, 0, 0, 0, 0, 0]
+    registers = [r0, 0, 0, 0, 0, 0]
     ip_value = 0
+    clock = 0
     while True:
         registers[ip] = ip_value
         try:
@@ -84,8 +95,17 @@ def day19():
         registers = run_opcode(op, a, b, c, registers)
         ip_value = registers[ip]
         ip_value += 1
-    return registers[0]
+        clock += 1
+        if clock > 30:
+            break
+    result = sum(find_divisors(registers[4]))
+    return result
+
+
+def find_divisors(n):
+    return set(reduce(list.__add__, ([i, n // i] for i in range(1, int(n ** 0.5) + 1) if n % i == 0)))
 
 
 if __name__ == "__main__":
     print(f"Solution to day 19 part 1: {day19()}")
+    print(f"Solution to day 19 part 2: {day19(1)}")
