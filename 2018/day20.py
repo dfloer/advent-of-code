@@ -1,5 +1,4 @@
 import networkx
-from copy import deepcopy
 
 
 def day20_split():
@@ -43,9 +42,10 @@ def parse():
 def day20():
     paths = parse()
     lens = networkx.algorithms.shortest_path_length(paths, 0)
-    return max(lens.values())
+    return max(lens.values()), len([x for x in lens.values() if x >= 1000])
 
 
 if __name__ == "__main__":
-    print(f"Solution to day 20 part 1: {day20()}")
-    # print(f"Solution to day 20 part 2: {day20()}")
+    pt1, pt2 = day20()
+    print(f"Solution to day 20 part 1: {pt1}")
+    print(f"Solution to day 20 part 2: {pt2}")
